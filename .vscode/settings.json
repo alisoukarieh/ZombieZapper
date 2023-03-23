@@ -4,6 +4,7 @@
         "stdlib.h": "c",
         "window.h": "c",
         "stdio.h": "c",
-        "player.h": "c"
+        "player.h": "c",
+        "entities.h": "c"
     }
 }

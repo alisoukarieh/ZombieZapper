@@ -4,5 +4,5 @@ game:
 	# -lSDL2_image -lSDL2_ttf -lSDL2_mixer -lm
 
 test : 
-	gcc -Isrc/Include -Lsrc/lib -o test test.c window.c player.c -lmingw32 -lSDL2main -lSDL2 
+	gcc -Isrc/Include -Lsrc/lib -o test test.c graphics.c entities.c -lmingw32 -lSDL2main -lSDL2 
 	

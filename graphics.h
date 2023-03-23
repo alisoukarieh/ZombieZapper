@@ -24,7 +24,7 @@ void close(SDL_Window** gWindow,SDL_Renderer** gRenderer) ;
 SDL_Texture* loadTexture(SDL_Renderer *gRenderer,char *file_name_bmp,int *size_w, int *size_h) ; 
 
 // Draw a SDL_Texture at position x, y
-void drawTexture (SDL_Renderer *gRenderer,SDL_Texture *texture,int x, int y) ;
+void drawTexture (SDL_Renderer *gRenderer,SDL_Texture *texture,int x, int y, double angle) ;
 
 SDL_Texture* creerTextureSorbonne(SDL_Renderer *ecran,char *nom_file_bmp,int *size_w, int *size_h) ;
 

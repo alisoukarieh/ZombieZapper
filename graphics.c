@@ -1,4 +1,4 @@
-#include "window.h"
+#include "graphics.h"
 
 // Init SDL
 int init(SDL_Window** gWindow,SDL_Renderer** gRenderer, char* nameWindow)
@@ -84,14 +84,15 @@ SDL_Texture* loadTexture(SDL_Renderer *gRenderer,char *file_name_bmp,int *size_w
     return texture;
 }
 
-void drawTexture (SDL_Renderer *gRenderer,SDL_Texture *texture,int x, int y)
+void drawTexture (SDL_Renderer *gRenderer,SDL_Texture *texture,int x, int y , double angle)
 {
     SDL_Rect position;
     position.x = x;
     position.y = y; 
 
     SDL_QueryTexture(texture,NULL,NULL,&position.w,&position.h);
-    SDL_RenderCopy(gRenderer, texture, NULL, &position);
+	SDL_RenderCopyEx(gRenderer, texture, NULL, &position, angle, NULL, SDL_FLIP_NONE);
+    //SDL_RenderCopy(gRenderer, texture, NULL, &position);
 
 }
 
