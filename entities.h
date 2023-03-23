@@ -13,6 +13,14 @@
 #define player_speed 10
 #define player_dim 250
 
+#define bullet_speed 10
+
+typedef stuct bullet {
+    int x;
+    int y;
+    double angle;
+    SDL_Texture *texture;
+} bullet;
 
 typedef struct player {
     int x;

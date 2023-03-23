@@ -6,5 +6,6 @@
         "stdio.h": "c",
         "player.h": "c",
         "entities.h": "c"
-    }
+    },
+    "C_Cpp.errorSquiggles": "disabled"
 }
