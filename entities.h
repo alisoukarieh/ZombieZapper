@@ -12,12 +12,12 @@
 
 #define player_speed 10
 #define player_dim 200
-#define player_dim_x 118
-#define player_dim_y 118
-#define player_gun_coord_x 197 // from upper right corner of the player
-#define player_gun_coord_y 129 // from upper right corner of the player
+#define player_dim_x 170
+#define player_dim_y 100
+#define player_gun_coord_x 85 // from the center of the player
+#define player_gun_coord_y 50 //30 // from the center of the player
 
-#define bullet_speed 1
+#define bullet_speed 10
 #define bullet_dim_x 30
 #define bullet_dim_y 11
 
@@ -33,8 +33,8 @@ typedef struct player {
 } player;
 
 typedef struct bullet {
-    int x;
-    int y;
+    float x;
+    float y;
     double angle;
     SDL_Texture *texture;
 } bullet;
@@ -53,7 +53,7 @@ void rotate_player(player* p) ;
 
 bullet* create_bullet(player* p ,  SDL_Texture *texture);
 void add_bullet(bullet_list** bl, bullet* b);
-void remove_bullet(bullet_list** bl, bullet* b);
+void remove_bullet(bullet_list** bl, bullet* b) ; 
 void move_bullet(bullet* b);
 void move_bullets(bullet_list** bl);
 

@@ -95,8 +95,9 @@ bullet* create_bullet(player* p ,  SDL_Texture *texture){
         printf("Error: malloc failed in create_bullet \n");
         exit(1);
     }
-    b->x = ((p->x + player_gun_coord_x) * cos(p->angle * M_PI / 180.0 ) );
-    b->y = ((p->y + player_gun_coord_y) * sin(p->angle * M_PI / 180.0 ));
+    // assign bullet position to player position with the offset and while taking into account the player angle
+    b -> x = p->x + player_dim/2 + player_gun_coord_x * cos(p->angle * M_PI / 180.0) ;
+    b -> y = p->y + player_dim/2 + player_gun_coord_y * sin(p->angle * M_PI / 180.0) ; 
     b->angle = p->angle;
     b->texture = texture;
     return b;
@@ -133,35 +134,7 @@ void add_bullet(bullet_list** bl, bullet* b){
 
 }
 
-void remove_bullet ( bullet_list **bl , bullet *b){
-    if ( b == NULL)
-    {
-        printf("Error: b is NULL in remove_bullet \n");
-        exit(1);
-    }
-    if ( (*bl) == NULL)
-    {
-        printf("Error: bl is NULL in remove_bullet \n");
-        exit(1);
-    }
-    bullet_list* tmp = (*bl);
-    if (tmp->bullet == b){
-        (*bl) = tmp->next;
-        free(tmp->bullet);
-    } else {
-        while (tmp->next != NULL){
-            if (tmp->next->bullet == b){
-                bullet_list* tmp2 = tmp->next;
-                tmp->next = tmp->next->next;
-                free(tmp2->bullet);
-                free(tmp2);
-                break;
-            }
-            tmp = tmp->next;
-        }
-    }
-    free(tmp);
-}
+
 
 void move_bullet(bullet* b) {
     if ( b == NULL)
@@ -169,7 +142,7 @@ void move_bullet(bullet* b) {
         printf("Error: b is NULL in move_bullet \n");
         exit(1);
     }
-    b->x += bullet_speed * cos(b->angle  * M_PI / 180.0);
+    b->x += bullet_speed * cos(b->angle * M_PI / 180.0);
     b->y += bullet_speed * sin(b->angle * M_PI / 180.0);
 
 }
@@ -181,17 +154,43 @@ void move_bullets(bullet_list** bl){
         
     } else {
         bullet_list* tmp = *bl;
-        
         while (tmp != NULL){
-            if (tmp->bullet->x < 0 || tmp->bullet->x > SCREEN_WIDTH || tmp->bullet->y < 0 || tmp->bullet->y > SCREEN_HEIGHT){
-                printf("remove bullet \n");
-                remove_bullet(bl, tmp->bullet);
-
-            } else {
+            // stop moving the bullet if it is out of the screen
+            if ( ! ( tmp->bullet->x < 0 || tmp->bullet->x > SCREEN_WIDTH || tmp->bullet->y < 0 || tmp->bullet->y > SCREEN_HEIGHT ) ){
                 move_bullet(tmp->bullet);
             }
             tmp = tmp->next;
         }
     }
 }
-    
+
+// remove bullet from the list
+void remove_bullet(bullet_list** bl, bullet* b){
+    if ( b == NULL)
+    {
+        printf("Error: b is NULL in remove_bullet \n");
+        exit(1);
+    }
+    if ( (*bl) == NULL)
+    {
+        printf("Error: bl is NULL in remove_bullet \n");
+        exit(1);
+    }
+    bullet_list* tmp = (*bl);
+    bullet_list* prev = NULL;
+    while (tmp != NULL){
+        if (tmp->bullet == b){
+            if (prev == NULL){
+                (*bl) = tmp->next;
+            } else {
+                prev->next = tmp->next;
+            }
+            free(tmp);
+            return;
+        }
+        prev = tmp;
+        tmp = tmp->next;
+    }
+}
+
+
