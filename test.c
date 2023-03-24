@@ -61,10 +61,11 @@ void player_movement_test(){
         drawTexture(ecran,p->texture,p->x,p->y,p->angle);
         if ( p -> shoot == 1)
         {
-            printf(" player position : %d , %d" , p -> x , p -> y) ; 
+            printf(" player position : %d , %d \n" , p -> x , p -> y) ; 
             bullet* b = create_bullet(p ,bullet_texture);
             // drawTexture(ecran,b->texture,b->x,b->y,b->angle);
             add_bullet(&bl,b);
+
             p -> shoot = 0;
             
         }
