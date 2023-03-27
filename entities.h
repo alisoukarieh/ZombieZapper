@@ -12,14 +12,17 @@
 
 #define player_speed 10
 #define player_dim 200
-#define player_dim_x 170
-#define player_dim_y 100
-#define player_gun_coord_x 85 // from the center of the player
-#define player_gun_coord_y 50 //30 // from the center of the player
+#define player_dim_x 120 //170
+#define player_dim_y 86 //100
+#define player_gun_coord_x 29 // from the center of the player
+#define player_gun_coord_y 0  // from the center of the player
 
 #define bullet_speed 10
 #define bullet_dim_x 30
 #define bullet_dim_y 11
+
+#define zombie_speed 1
+#define zombie_dim 150
 
 
 
@@ -30,6 +33,7 @@ typedef struct player {
     int health;
     int shoot;
     SDL_Texture *texture;
+    SDL_Rect rect;
 } player;
 
 typedef struct bullet {
@@ -37,6 +41,7 @@ typedef struct bullet {
     float y;
     double angle;
     SDL_Texture *texture;
+    SDL_Rect rect;
 } bullet;
 
 typedef struct bullet_list {
@@ -44,7 +49,19 @@ typedef struct bullet_list {
     struct bullet_list *next;
 } bullet_list;
 
+typedef struct zombie_list {
+    struct zombie *zombie;
+    struct zombie_list *next;
+} zombie_list;
 
+typedef struct zombie {
+    int x;
+    int y;
+    int health;
+    SDL_Texture *texture;
+    SDL_Rect rect;
+    double angle;
+} zombie;
 
 player* create_player(int x, int y, int health, SDL_Texture *texture);
 void move_player(player* p, int x, int y);
@@ -56,8 +73,16 @@ void add_bullet(bullet_list** bl, bullet* b);
 void remove_bullet(bullet_list** bl, bullet* b) ; 
 void move_bullet(bullet* b);
 void move_bullets(bullet_list** bl);
+void free_bullet_list(bullet_list** bl);
 
-
+zombie* create_zombie( SDL_Texture *texture);
+void move_zombie(zombie* z, player* p);
+void add_zombie(zombie_list** zl, zombie* z);
+void remove_zombie(zombie_list** zl, zombie* z) ;
+void move_zombies(zombie_list** zl , player* p);
+void free_zombie_list(zombie_list** zl);
+void rotate_zombie(zombie* z , player* p) ;
+void zombie_generator(zombie_list** zl , SDL_Texture *texture , int p) ;
 
 
 #endif
