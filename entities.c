@@ -228,8 +228,8 @@ zombie* create_zombie(SDL_Texture *texture){
     z->rect.h = zombie_dim;
     z -> angle = 0;
 
-    int z_x = rand() % (2 * SCREEN_WIDTH) - SCREEN_WIDTH;
-    int z_y = rand() % (2 * SCREEN_WIDTH) - SCREEN_HEIGHT;
+    int z_x = rand() % ( SCREEN_WIDTH) - 100;
+    int z_y = rand() % ( SCREEN_WIDTH) - 100;
     if (z_x > 0) {
         z_x += SCREEN_WIDTH;
     } else {
@@ -401,3 +401,64 @@ void zombie_generator(zombie_list** zl , SDL_Texture* texture , int p) {
         add_zombie(zl , create_zombie(texture));
     }
 } 
+
+
+void collision_manager(player* p , bullet_list** bl , zombie_list** zl){
+    bullet_list* current_bullet = *bl;
+    zombie_list* current_zombie = *zl;
+    int zombie_hit = 0;
+    while (current_zombie != NULL){
+        current_bullet = *bl;
+        while (current_bullet != NULL){
+            if ( SDL_HasIntersection( &(current_zombie->zombie->rect) , &(current_bullet->bullet->rect )) == SDL_TRUE ){
+                    zombie_hit = 1;
+                    bullet_list* next_ptr_bullet = current_bullet->next ; 
+                    zombie_list* next_ptr_zombie = current_zombie->next ;
+                    remove_zombie(zl,current_zombie->zombie); 
+                    remove_bullet(bl,current_bullet->bullet);
+                    current_bullet = next_ptr_bullet ; 
+                    current_zombie = next_ptr_zombie ;
+                    break;
+            } else {
+                current_bullet = current_bullet -> next;
+            }
+        }
+        if ( zombie_hit == 0){
+            if ( SDL_HasIntersection( &(current_zombie->zombie->rect) , &(p->rect )) == SDL_TRUE ){
+                printf("Game Over");
+            }
+            current_zombie = current_zombie -> next;
+        } else {
+            zombie_hit = 0;
+            
+        }
+    }
+}
+
+
+void frame_drawer( SDL_Renderer* renderer , player* p , zombie_list* zl , bullet_list* bl){
+    
+    
+    drawTexture(renderer , p->texture , p->x , p->y , p->angle);
+    zombie_list* tmp = zl;
+    while (tmp != NULL){
+        drawTexture(renderer , tmp->zombie->texture , tmp->zombie->x , tmp->zombie->y , tmp->zombie->angle);
+        tmp = tmp->next;
+    }
+    bullet_list* tmp2 = bl;
+    while (tmp2 != NULL){
+        drawTexture(renderer , tmp2->bullet->texture , tmp2->bullet->x , tmp2->bullet->y , tmp2->bullet->angle);
+        tmp2 = tmp2->next;
+    }
+    SDL_RenderPresent(renderer);
+    
+}
+
+
+void shoot_checker( player* p , bullet_list** bl , SDL_Texture* bullet_texture) {
+    if ( p -> shoot == 1){
+        bullet* b = create_bullet( p , bullet_texture);
+        add_bullet(bl , b);
+        p -> shoot = 0;
+    } 
+}

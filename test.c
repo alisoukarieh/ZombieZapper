@@ -54,6 +54,9 @@ void player_movement_test(){
     SDL_Texture* zombie_texture = loadTexture(ecran,"./textures/zombie.bmp",0,0);
     zombie_list* zl = NULL;
 
+    // init background
+    SDL_Texture* background_texture = loadTexture(ecran,"./textures/background.bmp",0,0);
+
 
 
     int* quit = 0 ;   
@@ -61,70 +64,14 @@ void player_movement_test(){
     {
         SDL_RenderClear(ecran);
         input_player(p ,quit);
-        
         rotate_player(p);
-        drawTexture(ecran,p->texture,p->x,p->y,p->angle);
-
         zombie_generator(&zl , zombie_texture , 2) ;
-
         move_zombies(&zl , p);
-
-        if ( p -> shoot == 1)
-        {
-            bullet* b = create_bullet(p ,bullet_texture);
-            add_bullet(&bl,b);
-            p -> shoot = 0;
-        }
-
+        shoot_checker(p,&bl,bullet_texture);
         move_bullets(&bl);
-        bullet_list* tmp = bl;
-        while ( tmp != NULL)
-        {
-            //printf(" bullet position : %f , %f \n" , tmp -> bullet -> x , tmp -> bullet -> y ) ;
-            drawTexture(ecran,tmp->bullet->texture,tmp->bullet->x,tmp->bullet->y,tmp->bullet->angle);
-            // intersection checker 
-            // if (SDL_HasIntersection(&(tmp->bullet->rect),&(p2->rect)) == SDL_TRUE)
-            // {
-            //     printf("bullet hit \n") ;
-            //     bullet_list* tmp2 = tmp->next ;  
-            //     remove_bullet(&bl,tmp->bullet);
-            //     tmp = tmp2 ; 
-            // } else {
-            //     tmp = tmp->next;
-            // }
-            int bullet_removed = 0 ;
-            zombie_list* tmp2 = zl;
-            while ( tmp2 != NULL)
-            {
-                if (SDL_HasIntersection(&(tmp->bullet->rect),&(tmp2->zombie->rect)) == SDL_TRUE)
-                {
-                    bullet_removed = 1 ;
-                    printf("bullet hit \n") ;
-                    bullet_list* next_ptr_bullet = tmp->next ; 
-                    zombie_list* next_ptr_zombie = tmp2->next ;
-                    remove_zombie(&zl,tmp2->zombie); 
-                    remove_bullet(&bl,tmp->bullet);
-                    tmp = next_ptr_bullet ; 
-                    tmp2 = next_ptr_zombie ;
-                    break;  
-                } else {
-                    tmp2 = tmp2->next;
-                }
-            }
-            if (bullet_removed == 0)
-            {
-                tmp = tmp->next;
-            } 
-        }
-        zombie_list* tmp3 = zl;
-        while ( tmp3 != NULL)
-        {
-            drawTexture(ecran,tmp3->zombie->texture,tmp3->zombie->x,tmp3->zombie->y,tmp3->zombie->angle);
-            tmp3 = tmp3->next;
-        }
-        
+        collision_manager(p,&bl,&zl);
 
-
+        frame_drawer(ecran,p,zl,bl);
         SDL_RenderPresent(ecran);
     }
 
