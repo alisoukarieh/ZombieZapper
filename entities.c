@@ -10,9 +10,10 @@ player* create_player(int x, int y, int health, SDL_Texture *texture){
     p->x = x;
     p->y = y;
     p->angle = 0;
-    p->health = health;
+    p->health = player_health;
     p->texture = texture;
     p->shoot = 0;
+    p->taking_damage = 0;
     p->rect.x = x;
     p->rect.y = y;
     p->rect.w = player_dim;
@@ -403,7 +404,7 @@ void zombie_generator(zombie_list** zl , SDL_Texture* texture , int p) {
 } 
 
 
-void collision_manager(player* p , bullet_list** bl , zombie_list** zl){
+void collision_manager(player* p , bullet_list** bl , zombie_list** zl  ){
     bullet_list* current_bullet = *bl;
     zombie_list* current_zombie = *zl;
     int zombie_hit = 0;
@@ -424,8 +425,9 @@ void collision_manager(player* p , bullet_list** bl , zombie_list** zl){
             }
         }
         if ( zombie_hit == 0){
-            if ( SDL_HasIntersection( &(current_zombie->zombie->rect) , &(p->rect )) == SDL_TRUE ){
-                printf("Game Over");
+            if ( SDL_HasIntersection( &(current_zombie->zombie->rect) , &(p->rect )) == SDL_TRUE  && p->taking_damage == 0){
+                p -> health -= 1;
+                p -> taking_damage = 100;
             }
             current_zombie = current_zombie -> next;
         } else {
@@ -436,10 +438,11 @@ void collision_manager(player* p , bullet_list** bl , zombie_list** zl){
 }
 
 
-void frame_drawer( SDL_Renderer* renderer , player* p , zombie_list* zl , bullet_list* bl){
+void frame_drawer( SDL_Renderer* renderer , player* p , zombie_list* zl , bullet_list* bl , SDL_Texture* health_texture){
     
     
     drawTexture(renderer , p->texture , p->x , p->y , p->angle);
+    drawTexture(renderer , health_texture , HEALTH_BAR_X , HEALTH_BAR_Y, 0);
     zombie_list* tmp = zl;
     while (tmp != NULL){
         drawTexture(renderer , tmp->zombie->texture , tmp->zombie->x , tmp->zombie->y , tmp->zombie->angle);
@@ -461,4 +464,42 @@ void shoot_checker( player* p , bullet_list** bl , SDL_Texture* bullet_texture) 
         add_bullet(bl , b);
         p -> shoot = 0;
     } 
+}
+
+SDL_Texture* health_manager(player* p  , SDL_Texture* texture , SDL_Texture* texture2 , SDL_Texture* texture3) {
+    if (p == NULL)
+    {
+        printf("Error: p is NULL in health_manager \n");
+        exit(1);
+    }
+    // limit health to be between 0 and 30
+    if (p->health  > 3){
+        p->health = 3;
+    } else if (p->health > 0){
+        if (p->health > 2){
+            return texture3;
+        } else if (p->health > 1){
+            return texture2;
+        } else {
+            return texture;
+        }
+    } else {
+        p->health = 0;
+    }
+} 
+
+void damage_animation( player* p , SDL_Texture* normal_player , SDL_Texture* damaged_player ){
+    if ( p->taking_damage != 0 ){
+        if (p->taking_damage % 5 == 0) {
+            if (p->texture == normal_player){
+                p->texture = damaged_player;
+            } else {
+                p->texture = normal_player;
+            } 
+            printf("taking damage %d") ; 
+        }
+        p->taking_damage -= 1;
+    } else {
+        p->texture = normal_player;
+    }
 }

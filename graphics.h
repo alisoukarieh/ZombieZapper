@@ -14,6 +14,10 @@
 #define FALSE 0
 #define TRUE 1
 
+// Health bar position
+#define HEALTH_BAR_X 640 - 95
+#define HEALTH_BAR_Y 650
+
 // Init SDL
 int init(SDL_Window** gWindow,SDL_Renderer** gRenderer, char* nameWindow) ; 
 

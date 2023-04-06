@@ -16,6 +16,7 @@
 #define player_dim_y 86 //100
 #define player_gun_coord_x 29 // from the center of the player
 #define player_gun_coord_y 0  // from the center of the player
+#define player_health 3
 
 #define bullet_speed 15
 #define bullet_dim_x 30
@@ -32,6 +33,7 @@ typedef struct player {
     double angle;
     int health;
     int shoot;
+    int taking_damage;
     SDL_Texture *texture;
     SDL_Rect rect;
 } player;
@@ -68,6 +70,7 @@ player* create_player(int x, int y, int health, SDL_Texture *texture);
 void move_player(player* p, int x, int y);
 void input_player(player* p , int *quit);  
 void rotate_player(player* p) ; 
+SDL_Texture* health_manager(player* p , SDL_Texture* texture , SDL_Texture* texture2 , SDL_Texture* texture3) ; 
 
 // Bullet Functions
 bullet* create_bullet(player* p ,  SDL_Texture *texture);
@@ -88,10 +91,9 @@ void rotate_zombie(zombie* z , player* p) ;
 void zombie_generator(zombie_list** zl , SDL_Texture *texture , int p) ;
 
 // Game Mechanics
-void collision_manager(player* p , bullet_list** bl , zombie_list** zl); 
-void frame_drawer(SDL_Renderer* ecran , player* p , zombie_list* zl , bullet_list* bl);
+void collision_manager(player* p , bullet_list** bl , zombie_list** zl ); 
+void frame_drawer(SDL_Renderer* ecran , player* p , zombie_list* zl , bullet_list* bl, SDL_Texture* health_texture);
 void shoot_checker( player* p , bullet_list** bl , SDL_Texture* bullet_texture) ; 
-
-
+void damage_animation(  player* p , SDL_Texture* normal_player , SDL_Texture* damaged_player );
 
 #endif

@@ -42,7 +42,8 @@ void player_movement_test(){
 
     // init player
     SDL_Texture* player_texture = loadTexture(ecran,"./textures/player2.bmp",0,0);
-    player* p = create_player( 0 , 0 , 100 , player_texture );
+    SDL_Texture* damaged_player_texture = loadTexture(ecran,"./textures/damaged_player.bmp",0,0);
+    player* p = create_player( 0 , 0 , player_health , player_texture );
     
 
     // init bullet
@@ -55,14 +56,18 @@ void player_movement_test(){
     zombie_list* zl = NULL;
 
     // init background
-    SDL_Texture* background_texture = loadTexture(ecran,"./textures/background.bmp",0,0);
+    SDL_Texture* background_texture = loadTexture(ecran,"./textures/background_2.bmp",0,0);
 
-
-
+    // init health bar
+    SDL_Texture* health_bar_texture = loadTexture(ecran,"./textures/1_heart.bmp",0,0);
+    SDL_Texture* health_bar_texture2 = loadTexture(ecran,"./textures/2_hearts.bmp",0,0);
+    SDL_Texture* health_bar_texture3 = loadTexture(ecran,"./textures/3_hearts.bmp",0,0);
+    SDL_Texture* current_health_bar_texture = health_bar_texture;
     int* quit = 0 ;   
     while ( quit == 0)
     {
         SDL_RenderClear(ecran);
+        current_health_bar_texture = health_manager(p,health_bar_texture,health_bar_texture2,health_bar_texture3);
         input_player(p ,quit);
         rotate_player(p);
         zombie_generator(&zl , zombie_texture , 2) ;
@@ -70,8 +75,10 @@ void player_movement_test(){
         shoot_checker(p,&bl,bullet_texture);
         move_bullets(&bl);
         collision_manager(p,&bl,&zl);
-
-        frame_drawer(ecran,p,zl,bl);
+        damage_animation(p, player_texture , damaged_player_texture);
+        
+        drawTexture(ecran,background_texture,0,0,0);
+        frame_drawer(ecran,p,zl,bl,current_health_bar_texture);
         SDL_RenderPresent(ecran);
     }
 
