@@ -14,10 +14,10 @@ player* create_player(int x, int y, int health, SDL_Texture *texture){
     p->texture = texture;
     p->shoot = 0;
     p->taking_damage = 0;
-    p->rect.x = x;
-    p->rect.y = y;
-    p->rect.w = player_dim;
-    p->rect.h = player_dim;
+    p->rect.x = x + player_collision_x_offset;
+    p->rect.y = y + player_collision_y_offset;
+    p->rect.w = player_collision_w;
+    p->rect.h = player_collision_h;
     return p;
 }
 
@@ -309,22 +309,28 @@ void remove_zombie(zombie_list** zl, zombie* z){
 }
 
 void move_zombie(zombie* z , player* p ){
+    int multiplier = 1;
     if ( z == NULL)
     {
         printf("Error: z is NULL in move_zombie \n");
         exit(1);
     }
-    // move the zombie towards the player
+    // if out of bounds , move faster
+    if (z->x < -50 || z->x > SCREEN_WIDTH+50 || z->y < -50 || z->y > SCREEN_HEIGHT + 50){
+        multiplier = 10;
+    }
+
     if (z->x < p->x){
-        z->x += zombie_speed;
+        z->x += zombie_speed * multiplier;
     } else if (z->x > p->x){
-        z->x -= zombie_speed;
+        z->x -= zombie_speed * multiplier;
     }
     if (z->y < p->y){
-        z->y += zombie_speed;
+        z->y += zombie_speed * multiplier;
     } else if (z->y > p->y){
-        z->y -= zombie_speed;
+        z->y -= zombie_speed * multiplier;
     }
+
     z->rect.x = z->x;
     z->rect.y = z->y;
     // rotate the zombie towards the player
@@ -369,11 +375,15 @@ void free_zombie_list(zombie_list** zl){
         
     } else {
         zombie_list* tmp = *zl;
-        while (tmp != NULL){
+        while (tmp -> next != NULL){
             zombie_list* next = tmp->next;
-            free(tmp);
+            free(tmp -> zombie -> texture);
+            free(tmp -> zombie);
+            printf("freeing zombie \n");
             tmp = next;
         }
+        printf("Done freeing zombie \n");
+        free(tmp);
         *zl = NULL;
     }
 }
@@ -466,7 +476,7 @@ void shoot_checker( player* p , bullet_list** bl , SDL_Texture* bullet_texture) 
     } 
 }
 
-SDL_Texture* health_manager(player* p  , SDL_Texture* texture , SDL_Texture* texture2 , SDL_Texture* texture3) {
+SDL_Texture* health_manager(player* p  , int * scene_manager ,SDL_Texture* texture , SDL_Texture* texture2 , SDL_Texture* texture3) {
     if (p == NULL)
     {
         printf("Error: p is NULL in health_manager \n");
@@ -485,6 +495,8 @@ SDL_Texture* health_manager(player* p  , SDL_Texture* texture , SDL_Texture* tex
         }
     } else {
         p->health = 0;
+        *scene_manager = 2;
+
     }
 } 
 
@@ -502,4 +514,39 @@ void damage_animation( player* p , SDL_Texture* normal_player , SDL_Texture* dam
     } else {
         p->texture = normal_player;
     }
+}
+
+
+void buttons_manager ( Uint32 mouseState , SDL_Event event ,  int * quit  , int* scene_manager ,int* mouseX , int * mouseY) {
+    while (SDL_PollEvent(&event)) {
+
+        switch (event.type) {
+            case SDL_QUIT:
+                *quit = 1;
+                break;
+            case SDL_MOUSEBUTTONDOWN:
+                // Get the current mouse state
+                mouseState = SDL_GetMouseState(mouseX, mouseY);
+                // Check if the left mouse button is pressed
+                if (mouseState & SDL_BUTTON(SDL_BUTTON_LEFT) && *mouseX >= play_button_x && *mouseX < play_button_x + play_button_w && *mouseY >= play_button_y && *mouseY < play_button_y + play_button_h && *scene_manager == 0) {
+                    *scene_manager = 1 ; 
+                } 
+                if (mouseState & SDL_BUTTON(SDL_BUTTON_LEFT) && *mouseX >= play_again_button_x && *mouseX < play_again_button_x + play_again_button_w && *mouseY >= play_again_button_y && *mouseY < play_again_button_y + play_again_button_h && *scene_manager == 2) {
+                    *scene_manager = 1 ; 
+                } 
+                if (mouseState & SDL_BUTTON(SDL_BUTTON_LEFT) && *mouseX >= quit_go_button_x && *mouseX < quit_go_button_x + quit_go_button_w && *mouseY >= quit_go_button_y && *mouseY < quit_go_button_y + quit_go_button_h && *scene_manager == 2) {
+                    *quit = 1 ; 
+                }
+                break;
+            default:
+                break;
+        }
+    }
+}
+
+// memeory management
+void free_all ( bullet_list** bl , zombie_list** zl ) {
+    free_bullet_list(bl);
+    free_zombie_list(zl);
+
 }
