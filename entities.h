@@ -14,13 +14,13 @@
 #define player_dim 200
 #define player_dim_x 120 //170
 #define player_dim_y 86 //100
-#define player_gun_coord_x 29 // from the center of the player
-#define player_gun_coord_y 0  // from the center of the player
+#define player_gun_coord_x 75 //73 // from the center of the player
+#define player_gun_coord_y 14  // from the center of the player
 #define player_health 3
-#define player_collision_x_offset 18
-#define player_collision_y_offset 54
+#define player_collision_x_offset 82
+#define player_collision_y_offset 72
 #define player_collision_w  60
-#define player_collision_h  70
+#define player_collision_h  80
 
 #define bullet_speed 15
 #define bullet_dim_x 30
@@ -35,6 +35,25 @@
 #define play_button_y 310
 #define play_button_w 160
 #define play_button_h 50 
+
+// how to play button
+#define how_to_play_button_x 426
+#define how_to_play_button_y 409
+#define how_to_play_button_w 438
+#define how_to_play_button_h 52
+
+// quit button
+#define quit_button_x 562
+#define quit_button_y 520
+#define quit_button_w 155
+#define quit_button_h 50
+
+// How to play screen buttons
+// back button
+#define back_button_x 67
+#define back_button_y 629
+#define back_button_w 177
+#define back_button_h 54
 
 // GameOver Screen Buttons
 // Play Again Button

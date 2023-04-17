@@ -103,8 +103,8 @@ bullet* create_bullet(player* p ,  SDL_Texture *texture){
         exit(1);
     }
     // assign bullet position to player position with the offset and while taking into account the player angle
-    b -> x = p->x + player_dim/2 + player_gun_coord_x * cos(p->angle * M_PI / 180.0) ;
-    b -> y = p->y + player_dim/2 + player_gun_coord_y * sin(p->angle * M_PI / 180.0) ; 
+    b -> x = p->x + player_dim/2 + (player_gun_coord_x * cos(p->angle * M_PI / 180.0)) ;
+    b -> y = p->y + player_dim/2 + (player_gun_coord_y * sin(p->angle * M_PI / 180.0)) ; 
     b->angle = p->angle;
     b->texture = texture;
     b->rect.x = b->x;
@@ -153,12 +153,14 @@ void move_bullet(bullet* b) {
     if ( b == NULL)
     {
         printf("Error: b is NULL in move_bullet \n");
-        exit(1);
+        //exit(1);
+    } else{
+        b->x += bullet_speed * cos(b->angle * M_PI / 180.0);
+        b->y += bullet_speed * sin(b->angle * M_PI / 180.0);
+        b->rect.x = b->x;
+        b->rect.y = b->y;
     }
-    b->x += bullet_speed * cos(b->angle * M_PI / 180.0);
-    b->y += bullet_speed * sin(b->angle * M_PI / 180.0);
-    b->rect.x = b->x;
-    b->rect.y = b->y;
+   
 
 
 }
@@ -166,7 +168,7 @@ void move_bullet(bullet* b) {
 void move_bullets(bullet_list** bl){
     if ( *bl == NULL)
     {
-        //printf("Error: bl is NULL in move_bullets \n");
+        printf("Error: bl is NULL in move_bullets \n");
         
     } else {
         bullet_list* tmp = *bl;
@@ -313,23 +315,21 @@ void move_zombie(zombie* z , player* p ){
     if ( z == NULL)
     {
         printf("Error: z is NULL in move_zombie \n");
-        exit(1);
     }
     // if out of bounds , move faster
-    if (z->x < -50 || z->x > SCREEN_WIDTH+50 || z->y < -50 || z->y > SCREEN_HEIGHT + 50){
+    if (z->x < -100 || z->x > SCREEN_WIDTH+100 || z->y < -100 || z->y > SCREEN_HEIGHT + 100){
         multiplier = 10;
+    } else {
+        multiplier = 1;
     }
 
-    if (z->x < p->x){
-        z->x += zombie_speed * multiplier;
-    } else if (z->x > p->x){
-        z->x -= zombie_speed * multiplier;
-    }
-    if (z->y < p->y){
-        z->y += zombie_speed * multiplier;
-    } else if (z->y > p->y){
-        z->y -= zombie_speed * multiplier;
-    }
+    int delta_x = p->x - z->x;
+    int delta_y = p->y - z->y;
+
+    double distance = sqrt( delta_x * delta_x + delta_y * delta_y );
+
+    z->x += (delta_x / distance) * zombie_speed * multiplier;
+    z->y += (delta_y / distance) * zombie_speed * multiplier;
 
     z->rect.x = z->x;
     z->rect.y = z->y;
@@ -528,20 +528,29 @@ void buttons_manager ( Uint32 mouseState , SDL_Event event ,  int * quit  , int*
                 // Get the current mouse state
                 mouseState = SDL_GetMouseState(mouseX, mouseY);
                 // Check if the left mouse button is pressed
-                if (mouseState & SDL_BUTTON(SDL_BUTTON_LEFT) && *mouseX >= play_button_x && *mouseX < play_button_x + play_button_w && *mouseY >= play_button_y && *mouseY < play_button_y + play_button_h && *scene_manager == 0) {
+                // main menu buttons
+                if (mouseState && SDL_BUTTON(SDL_BUTTON_LEFT) && *mouseX >= play_button_x && *mouseX < play_button_x + play_button_w && *mouseY >= play_button_y && *mouseY < play_button_y + play_button_h && *scene_manager == 0) {
                     *scene_manager = 1 ; 
-                } 
-                if (mouseState & SDL_BUTTON(SDL_BUTTON_LEFT) && *mouseX >= play_again_button_x && *mouseX < play_again_button_x + play_again_button_w && *mouseY >= play_again_button_y && *mouseY < play_again_button_y + play_again_button_h && *scene_manager == 2) {
-                    *scene_manager = 1 ; 
-                } 
-                if (mouseState & SDL_BUTTON(SDL_BUTTON_LEFT) && *mouseX >= quit_go_button_x && *mouseX < quit_go_button_x + quit_go_button_w && *mouseY >= quit_go_button_y && *mouseY < quit_go_button_y + quit_go_button_h && *scene_manager == 2) {
-                    *quit = 1 ; 
+                } else if (mouseState && SDL_BUTTON(SDL_BUTTON_LEFT) && *mouseX >= how_to_play_button_x && *mouseX < how_to_play_button_x + how_to_play_button_w && *mouseY >= how_to_play_button_y && *mouseY < how_to_play_button_y + how_to_play_button_h && *scene_manager == 0) {
+                    *scene_manager = 3 ;
+                } else if (mouseState && SDL_BUTTON(SDL_BUTTON_LEFT) && *mouseX >= quit_button_x && *mouseX < quit_button_x + quit_button_w && *mouseY >= quit_button_y && *mouseY < quit_button_y + quit_button_h && *scene_manager == 0) {
+                    *quit = 1 ;
                 }
-                break;
-            default:
+                // game over buttons  
+                else if (mouseState && SDL_BUTTON(SDL_BUTTON_LEFT) && *mouseX >= play_again_button_x && *mouseX < play_again_button_x + play_again_button_w && *mouseY >= play_again_button_y && *mouseY < play_again_button_y + play_again_button_h && *scene_manager == 2) {
+                    *scene_manager = 1 ; 
+                } else if (mouseState && SDL_BUTTON(SDL_BUTTON_LEFT) && *mouseX >= quit_go_button_x && *mouseX < quit_go_button_x + quit_go_button_w && *mouseY >= quit_go_button_y && *mouseY < quit_go_button_y + quit_go_button_h && *scene_manager == 2) {
+                    *quit = 1 ; 
+                } 
+                // how to play buttons
+                else if (mouseState && SDL_BUTTON(SDL_BUTTON_LEFT) && *mouseX >= back_button_x && *mouseX < back_button_x + back_button_w && *mouseY >= back_button_y && *mouseY < back_button_y + back_button_h && *scene_manager == 3) {
+                    *scene_manager = 0 ;
+                    
+                }
                 break;
         }
     }
+    printf("exit buttons manager \n");
 }
 
 // memeory management

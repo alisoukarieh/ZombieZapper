@@ -5,6 +5,7 @@
 #include "graphics.h"
 #include "entities.h"
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_ttf.h>
 
 // int opening_window_test()
 // {
@@ -34,7 +35,8 @@
 // }
 
 void player_movement_test(){
-    int  scene_manager = 2;
+    int  scene_manager = 0;
+
 
     // init window
     SDL_Window* fenetre=NULL;
@@ -42,8 +44,8 @@ void player_movement_test(){
     init(&fenetre,&ecran,"ZombieZapper");
 
     // init player
-    SDL_Texture* player_texture = loadTexture(ecran,"./textures/player2.bmp",0,0);
-    SDL_Texture* damaged_player_texture = loadTexture(ecran,"./textures/damaged_player.bmp",0,0);
+    SDL_Texture* player_texture = loadTexture(ecran,"./textures/player3.bmp",0,0);
+    SDL_Texture* damaged_player_texture = loadTexture(ecran,"./textures/damaged_player_2.bmp",0,0);
     player* p = create_player( 500 , 280 ,  player_health , player_texture );
     
 
@@ -67,12 +69,18 @@ void player_movement_test(){
     // init menu 
     SDL_Texture* main_menu_texture = loadTexture(ecran,"./textures/menu.bmp",0,0);
 
-    //init gameover_screen 
+    // init gameover_screen 
     SDL_Texture* gameover_screen_texture = loadTexture(ecran,"./textures/GameOverScreen.bmp",0,0);
+
+    // init how to play screen
+    SDL_Texture* how_to_play_screen_texture = loadTexture(ecran,"./textures/how_to_play.bmp",0,0);
+
+    // init mouse 
     int mouseX, mouseY;
     Uint32 mouseState;
-    int* quit = 0 ;   
+    int quit = 0 ;   
     SDL_Event event;
+
     while ( quit == 0)
     {
         SDL_RenderClear(ecran);
@@ -80,12 +88,12 @@ void player_movement_test(){
             
             case 0 : 
                 drawTexture(ecran,main_menu_texture,0,0,0);
-                buttons_manager ( mouseState , event  , quit , &scene_manager , &mouseX , &mouseY) ; 
+                buttons_manager ( mouseState , event  , &quit , &scene_manager , &mouseX , &mouseY) ; 
                 break;
 
             case 1 :
                 current_health_bar_texture = health_manager(p, &scene_manager , health_bar_texture,health_bar_texture2,health_bar_texture3);
-                input_player(p ,quit);
+                input_player(p , &quit);
                 rotate_player(p);
                 zombie_generator(&zl , zombie_texture , 5) ;
                 move_zombies(&zl , p);
@@ -95,23 +103,28 @@ void player_movement_test(){
                 damage_animation(p, player_texture , damaged_player_texture);
                 drawTexture(ecran,background_texture,0,0,0);
                 frame_drawer(ecran,p,zl,bl,current_health_bar_texture);
+                printf("player angle : %f \n" , p->angle);
                 break;
             case 2 :
                 // game over
                 free_all(&bl , &zl) ; 
                 drawTexture(ecran,gameover_screen_texture,0,0,0);
-                buttons_manager ( mouseState , event  , quit , &scene_manager , &mouseX , &mouseY) ;
+                buttons_manager ( mouseState , event  , &quit , &scene_manager , &mouseX , &mouseY) ;
                 p -> health = player_health;
                 p -> taking_damage = 0 ;
                 p->x = 500;
                 p->y = 280;
                 p->rect.x = p->x;
                 p->rect.y = p->y;
-                
+                break;
+            case 3 :
+                drawTexture(ecran,how_to_play_screen_texture,0,0,0);
+                buttons_manager ( mouseState , event  , &quit , &scene_manager , &mouseX , &mouseY) ;
                 break;
         }
         SDL_RenderPresent(ecran);
     }
+    printf("1 \n") ; 
     if ( player_texture ) { SDL_DestroyTexture(player_texture); player_texture = NULL; }
     if ( damaged_player_texture ) { SDL_DestroyTexture(damaged_player_texture); damaged_player_texture = NULL; }
     if ( bullet_texture ) { SDL_DestroyTexture(bullet_texture); bullet_texture = NULL; }
@@ -122,7 +135,13 @@ void player_movement_test(){
     if ( health_bar_texture3 ) { SDL_DestroyTexture(health_bar_texture3); health_bar_texture3 = NULL; }
     if ( main_menu_texture ) { SDL_DestroyTexture(main_menu_texture); main_menu_texture = NULL; }
     if ( gameover_screen_texture ) { SDL_DestroyTexture(gameover_screen_texture); gameover_screen_texture = NULL; }
+    if ( how_to_play_screen_texture ) { SDL_DestroyTexture(how_to_play_screen_texture); how_to_play_screen_texture = NULL; }
 
+    printf("2 \n") ; 
+
+    SDL_DestroyRenderer(ecran);
+    SDL_DestroyWindow(fenetre);
+    SDL_Quit();
     free( p -> texture );
     free( p );
     free_all(&bl,&zl);
@@ -177,7 +196,7 @@ int main(int argc, char* argv[])
 {
     player_movement_test();
     //list_testing();
-
+    printf("end of program \n");
     return 0;
 
 }
