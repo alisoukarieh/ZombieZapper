@@ -1,8 +1,12 @@
-game:
-	gcc -Isrc/Include -Lsrc/lib -o main main.c window.c player.c -lmingw32 -lSDL2main -lSDL2 
-	#gcc -I./ -I src/include -L src/lib -o main main.c window.c player.c -lSDL2main -lSDL2 
-	# -lSDL2_image -lSDL2_ttf -lSDL2_mixer -lm
+CC=gcc
+CFLAGS=-Isrc/Include
+LIBS=-Lsrc/lib -lmingw32 -lSDL2main -lSDL2
 
-test : 
-	gcc -Isrc/Include -Lsrc/lib -o test test.c graphics.c entities.c -lmingw32 -lSDL2_ttf -lSDL2main -lSDL2 
-	
+SRCS=test.c src/bullets.c src/game_mechanics.c src/graphics.c src/player.c src/zombies.c
+OBJS=$(SRCS:.c=.o)
+
+test: $(OBJS)
+	$(CC) $(CFLAGS) $(OBJS) -o test $(LIBS)
+
+clean:
+	rm $(OBJS) test

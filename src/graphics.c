@@ -1,4 +1,4 @@
-#include "graphics.h"
+#include "./include/graphics.h"
 
 // Init SDL
 int init(SDL_Window** gWindow,SDL_Renderer** gRenderer, char* nameWindow)

@@ -449,8 +449,6 @@ void collision_manager(player* p , bullet_list** bl , zombie_list** zl  ){
 
 
 void frame_drawer( SDL_Renderer* renderer , player* p , zombie_list* zl , bullet_list* bl , SDL_Texture* health_texture){
-    
-    
     drawTexture(renderer , p->texture , p->x , p->y , p->angle);
     drawTexture(renderer , health_texture , HEALTH_BAR_X , HEALTH_BAR_Y, 0);
     zombie_list* tmp = zl;
@@ -464,7 +462,6 @@ void frame_drawer( SDL_Renderer* renderer , player* p , zombie_list* zl , bullet
         tmp2 = tmp2->next;
     }
     SDL_RenderPresent(renderer);
-    
 }
 
 
@@ -545,7 +542,6 @@ void buttons_manager ( Uint32 mouseState , SDL_Event event ,  int * quit  , int*
                 // how to play buttons
                 else if (mouseState && SDL_BUTTON(SDL_BUTTON_LEFT) && *mouseX >= back_button_x && *mouseX < back_button_x + back_button_w && *mouseY >= back_button_y && *mouseY < back_button_y + back_button_h && *scene_manager == 3) {
                     *scene_manager = 0 ;
-                    
                 }
                 break;
         }

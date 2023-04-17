@@ -2,10 +2,14 @@
 #include <stdlib.h>
 #include <time.h>
 #include <math.h>
-#include "graphics.h"
-#include "entities.h"
+#include "./src/include/graphics.h"
+//#include "entities.h"
+#include "./src/include/player.h"
+#include "./src/include/bullets.h"
+#include "./src/include/zombies.h"
+#include "./src/include/game_mechanics.h"
 #include <SDL2/SDL.h>
-#include <SDL2/SDL_ttf.h>
+
 
 // int opening_window_test()
 // {
@@ -44,36 +48,36 @@ void player_movement_test(){
     init(&fenetre,&ecran,"ZombieZapper");
 
     // init player
-    SDL_Texture* player_texture = loadTexture(ecran,"./textures/player3.bmp",0,0);
-    SDL_Texture* damaged_player_texture = loadTexture(ecran,"./textures/damaged_player_2.bmp",0,0);
+    SDL_Texture* player_texture = loadTexture(ecran,"./textures/entities/player3.bmp",0,0);
+    SDL_Texture* damaged_player_texture = loadTexture(ecran,"./textures/entities/damaged_player_2.bmp",0,0);
     player* p = create_player( 500 , 280 ,  player_health , player_texture );
     
 
     // init bullet
-    SDL_Texture* bullet_texture = loadTexture(ecran,"./textures/bullet.bmp",0,0);
+    SDL_Texture* bullet_texture = loadTexture(ecran,"./textures/entities/bullet.bmp",0,0);
     bullet_list* bl = NULL; 
 
     // init zombie
-    SDL_Texture* zombie_texture = loadTexture(ecran,"./textures/zombie.bmp",0,0);
+    SDL_Texture* zombie_texture = loadTexture(ecran,"./textures/entities/zombie.bmp",0,0);
     zombie_list* zl = NULL;
 
     // init background
     SDL_Texture* background_texture = loadTexture(ecran,"./textures/background2.bmp",0,0);
 
     // init health bar
-    SDL_Texture* health_bar_texture = loadTexture(ecran,"./textures/1_heart.bmp",0,0);
-    SDL_Texture* health_bar_texture2 = loadTexture(ecran,"./textures/2_hearts.bmp",0,0);
-    SDL_Texture* health_bar_texture3 = loadTexture(ecran,"./textures/3_hearts.bmp",0,0);
+    SDL_Texture* health_bar_texture = loadTexture(ecran,"./textures/healthbar/1_heart.bmp",0,0);
+    SDL_Texture* health_bar_texture2 = loadTexture(ecran,"./textures/healthbar/2_hearts.bmp",0,0);
+    SDL_Texture* health_bar_texture3 = loadTexture(ecran,"./textures/healthbar/3_hearts.bmp",0,0);
     SDL_Texture* current_health_bar_texture = health_bar_texture;
 
     // init menu 
-    SDL_Texture* main_menu_texture = loadTexture(ecran,"./textures/menu.bmp",0,0);
+    SDL_Texture* main_menu_texture = loadTexture(ecran,"./textures/menus/menu.bmp",0,0);
 
     // init gameover_screen 
-    SDL_Texture* gameover_screen_texture = loadTexture(ecran,"./textures/GameOverScreen.bmp",0,0);
+    SDL_Texture* gameover_screen_texture = loadTexture(ecran,"./textures/menus/GameOverScreen.bmp",0,0);
 
     // init how to play screen
-    SDL_Texture* how_to_play_screen_texture = loadTexture(ecran,"./textures/how_to_play.bmp",0,0);
+    SDL_Texture* how_to_play_screen_texture = loadTexture(ecran,"./textures/menus/how_to_play.bmp",0,0);
 
     // init mouse 
     int mouseX, mouseY;
@@ -124,7 +128,6 @@ void player_movement_test(){
         }
         SDL_RenderPresent(ecran);
     }
-    printf("1 \n") ; 
     if ( player_texture ) { SDL_DestroyTexture(player_texture); player_texture = NULL; }
     if ( damaged_player_texture ) { SDL_DestroyTexture(damaged_player_texture); damaged_player_texture = NULL; }
     if ( bullet_texture ) { SDL_DestroyTexture(bullet_texture); bullet_texture = NULL; }
@@ -137,7 +140,6 @@ void player_movement_test(){
     if ( gameover_screen_texture ) { SDL_DestroyTexture(gameover_screen_texture); gameover_screen_texture = NULL; }
     if ( how_to_play_screen_texture ) { SDL_DestroyTexture(how_to_play_screen_texture); how_to_play_screen_texture = NULL; }
 
-    printf("2 \n") ; 
 
     SDL_DestroyRenderer(ecran);
     SDL_DestroyWindow(fenetre);

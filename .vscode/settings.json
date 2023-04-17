@@ -6,7 +6,11 @@
         "stdio.h": "c",
         "player.h": "c",
         "entities.h": "c",
-        "cmath": "c"
+        "cmath": "c",
+        "bullets.h": "c",
+        "game_mechanics.h": "c",
+        "zombies.h": "c",
+        "ENTITIES.H": "cpp"
     },
     "C_Cpp.errorSquiggles": "disabled"
 }
