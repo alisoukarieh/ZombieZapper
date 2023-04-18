@@ -128,3 +128,25 @@ void dessine_sorbonne(SDL_Renderer *ecran,SDL_Texture *sorbonneTexture,int x, in
     SDL_QueryTexture(sorbonneTexture,NULL,NULL,&position.w,&position.h);// recupere la taille de l'image originelle
     SDL_RenderCopy(ecran, sorbonneTexture, NULL, &position);
 }
+
+void score_init(SDL_Renderer* renderer , SDL_Texture** digits){
+	for (int i = 0; i < 10; i++) {
+		char filename[20];
+		sprintf(filename, "/Users/souka/Desktop/L2/Advanced_C/ZombieZapper/textures/digits/digit_%d.bmp", i); 
+		digits[i] = loadTexture(renderer , filename , 0 , 0 ); // Load digit texture
+	}
+}
+
+void score_update(int score, SDL_Renderer* renderer, SDL_Texture** digits) {
+	char score_str[10];
+    sprintf(score_str, "%d", score); // Convert score to string
+    int digit_width = 30; // Assumes each digit texture is 32 pixels wide
+    int digit_padding = 0; // Padding between digits
+    int x = 200; // Starting x position of score counter
+    int y = 30; // Y position of score counter
+    for (int i = 0; i < strlen(score_str); i++) {
+        char c = score_str[i];
+        int digit = c - '0'; // Convert character to digit value
+		drawTexture(renderer, digits[digit], x + i * (digit_width + digit_padding), y, 0);
+    }
+}

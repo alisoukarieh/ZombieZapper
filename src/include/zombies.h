@@ -29,12 +29,12 @@ typedef struct zombie {
 
 // Zombie Functions
 zombie* create_zombie( SDL_Texture *texture);
-void move_zombie(zombie* z, player* p);
+void move_zombie(zombie* z, player* p , int score , float difficulty);
 void add_zombie(zombie_list** zl, zombie* z);
 void remove_zombie(zombie_list** zl, zombie* z) ;
-void move_zombies(zombie_list** zl , player* p);
+void move_zombies(zombie_list** zl , player* p ,int score , float difficulty);
 void free_zombie_list(zombie_list** zl);
 void rotate_zombie(zombie* z , player* p) ;
-void zombie_generator(zombie_list** zl , SDL_Texture *texture , int p) ;
+void zombie_generator(zombie_list** zl , SDL_Texture *texture , int p , int score , float difficulty) ;
 
 #endif

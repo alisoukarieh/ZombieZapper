@@ -69,6 +69,9 @@ void player_movement_test(){
     SDL_Texture* health_bar_texture2 = loadTexture(ecran,"./textures/healthbar/2_hearts.bmp",0,0);
     SDL_Texture* health_bar_texture3 = loadTexture(ecran,"./textures/healthbar/3_hearts.bmp",0,0);
     SDL_Texture* current_health_bar_texture = health_bar_texture;
+    if ( health_bar_texture == NULL || health_bar_texture2 == NULL || health_bar_texture3 == NULL ){
+        printf("error loading health bar textures");
+    }
 
     // init menu 
     SDL_Texture* main_menu_texture = loadTexture(ecran,"./textures/menus/menu.bmp",0,0);
@@ -85,29 +88,46 @@ void player_movement_test(){
     int quit = 0 ;   
     SDL_Event event;
 
+    // init score textures 
+    SDL_Texture** score_textures = malloc(10*sizeof(SDL_Texture*));
+    //score_init(ecran,score_textures);
+    score_textures[0] = loadTexture(ecran,"./textures/digits/digit_0.bmp",0,0);
+    score_textures[1] = loadTexture(ecran,"./textures/digits/digit_1.bmp",0,0);
+    score_textures[2] = loadTexture(ecran,"./textures/digits/digit_2.bmp",0,0);
+    score_textures[3] = loadTexture(ecran,"./textures/digits/digit_3.bmp",0,0);
+    score_textures[4] = loadTexture(ecran,"./textures/digits/digit_4.bmp",0,0);
+    score_textures[5] = loadTexture(ecran,"./textures/digits/digit_5.bmp",0,0);
+    score_textures[6] = loadTexture(ecran,"./textures/digits/digit_6.bmp",0,0);
+    score_textures[7] = loadTexture(ecran,"./textures/digits/digit_7.bmp",0,0);
+    score_textures[8] = loadTexture(ecran,"./textures/digits/digit_8.bmp",0,0);
+    score_textures[9] = loadTexture(ecran,"./textures/digits/digit_9.bmp",0,0);
+
+    SDL_Texture* score_texture = loadTexture(ecran,"./textures/digits/score.bmp",0,0);
+    int score = 0 ;
     while ( quit == 0)
     {
         SDL_RenderClear(ecran);
+        
         switch (scene_manager) {
             
             case 0 : 
                 drawTexture(ecran,main_menu_texture,0,0,0);
                 buttons_manager ( mouseState , event  , &quit , &scene_manager , &mouseX , &mouseY) ; 
                 break;
-
             case 1 :
                 current_health_bar_texture = health_manager(p, &scene_manager , health_bar_texture,health_bar_texture2,health_bar_texture3);
                 input_player(p , &quit);
                 rotate_player(p);
-                zombie_generator(&zl , zombie_texture , 5) ;
-                move_zombies(&zl , p);
+                zombie_generator(&zl , zombie_texture , spawn_probability , score , difficulty_multiplier_spawn) ;
+                move_zombies(&zl , p , score , difficulty_multiplier_speed);
                 shoot_checker(p,&bl,bullet_texture);
                 move_bullets(&bl);
-                collision_manager(p,&bl,&zl);
+                collision_manager(p,&bl,&zl, &score);
                 damage_animation(p, player_texture , damaged_player_texture);
                 drawTexture(ecran,background_texture,0,0,0);
-                frame_drawer(ecran,p,zl,bl,current_health_bar_texture);
-                printf("player angle : %f \n" , p->angle);
+                score_update(score,ecran,score_textures);
+                frame_drawer(ecran,p,zl,bl,current_health_bar_texture , score_texture);
+                
                 break;
             case 2 :
                 // game over
@@ -139,7 +159,16 @@ void player_movement_test(){
     if ( main_menu_texture ) { SDL_DestroyTexture(main_menu_texture); main_menu_texture = NULL; }
     if ( gameover_screen_texture ) { SDL_DestroyTexture(gameover_screen_texture); gameover_screen_texture = NULL; }
     if ( how_to_play_screen_texture ) { SDL_DestroyTexture(how_to_play_screen_texture); how_to_play_screen_texture = NULL; }
-
+    if ( score_textures[0] ) { SDL_DestroyTexture(score_textures[0]); score_textures[0] = NULL; }
+    if ( score_textures[1] ) { SDL_DestroyTexture(score_textures[1]); score_textures[1] = NULL; }
+    if ( score_textures[2] ) { SDL_DestroyTexture(score_textures[2]); score_textures[2] = NULL; }
+    if ( score_textures[3] ) { SDL_DestroyTexture(score_textures[3]); score_textures[3] = NULL; }
+    if ( score_textures[4] ) { SDL_DestroyTexture(score_textures[4]); score_textures[4] = NULL; }
+    if ( score_textures[5] ) { SDL_DestroyTexture(score_textures[5]); score_textures[5] = NULL; }
+    if ( score_textures[6] ) { SDL_DestroyTexture(score_textures[6]); score_textures[6] = NULL; }
+    if ( score_textures[7] ) { SDL_DestroyTexture(score_textures[7]); score_textures[7] = NULL; }
+    if ( score_textures[8] ) { SDL_DestroyTexture(score_textures[8]); score_textures[8] = NULL; }
+    if ( score_textures[9] ) { SDL_DestroyTexture(score_textures[9]); score_textures[9] = NULL; }
 
     SDL_DestroyRenderer(ecran);
     SDL_DestroyWindow(fenetre);

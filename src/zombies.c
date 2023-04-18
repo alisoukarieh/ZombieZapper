@@ -95,7 +95,7 @@ void remove_zombie(zombie_list** zl, zombie* z){
     }
 }
 
-void move_zombie(zombie* z , player* p ){
+void move_zombie(zombie* z , player* p , int score , float difficulty){
     int multiplier = 1;
     if ( z == NULL)
     {
@@ -105,9 +105,9 @@ void move_zombie(zombie* z , player* p ){
     if (z->x < -100 || z->x > SCREEN_WIDTH+100 || z->y < -100 || z->y > SCREEN_HEIGHT + 100){
         multiplier = 10;
     } else {
-        multiplier = 1;
+        multiplier = 1 + score*difficulty;
     }
-
+    //printf("multiplier: %d \n" , multiplier);
     int delta_x = p->x - z->x;
     int delta_y = p->y - z->y;
 
@@ -122,7 +122,7 @@ void move_zombie(zombie* z , player* p ){
     rotate_zombie(z ,p);
 }
 
-void move_zombies(zombie_list** zl , player* p){
+void move_zombies(zombie_list** zl , player* p , int score , float difficulty){
     if ( *zl == NULL)
     {
         //printf("Error: zl is NULL in move_zombies \n");
@@ -131,7 +131,7 @@ void move_zombies(zombie_list** zl , player* p){
     } else {
         zombie_list* tmp = *zl;
         while (tmp != NULL){
-            move_zombie(tmp->zombie , p);
+            move_zombie(tmp->zombie , p , score , difficulty);
             tmp = tmp->next;
         }
     }
@@ -140,7 +140,7 @@ void move_zombies(zombie_list** zl , player* p){
 void free_zombie_list(zombie_list** zl){
     if ( *zl == NULL)
     {
-        printf("Error: zl is NULL in free_zombie_list \n");
+        return ;
         
     } else {
         zombie_list* tmp = *zl;
@@ -148,10 +148,8 @@ void free_zombie_list(zombie_list** zl){
             zombie_list* next = tmp->next;
             free(tmp -> zombie -> texture);
             free(tmp -> zombie);
-            printf("freeing zombie \n");
             tmp = next;
         }
-        printf("Done freeing zombie \n");
         free(tmp);
         *zl = NULL;
     }
@@ -174,9 +172,9 @@ void rotate_zombie ( zombie* z , player* p ){
     // z->angle = acos(cos_angle) * 180 / M_PI;
 }
 
-void zombie_generator(zombie_list** zl , SDL_Texture* texture , int p) {
-    int x = rand() % 100;
-    if (x < p){
+void zombie_generator(zombie_list** zl , SDL_Texture* texture , int p , int score , float difficulty_multiplier) {
+    float x = rand() % 100;
+    if (x  < p + score*difficulty_multiplier){
         add_zombie(zl , create_zombie(texture));
     }
 } 

@@ -75,7 +75,6 @@ void input_player( player* p , int *quit ){
             case SDL_MOUSEBUTTONDOWN:
                 if (event.button.button == SDL_BUTTON_LEFT) {
                     p->shoot = 1;
-                    printf("player position : %d , %d \n" , p->x , p->y);
                 }
                 break;
         }

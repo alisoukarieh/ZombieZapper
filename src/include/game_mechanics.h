@@ -50,8 +50,13 @@
 #define quit_go_button_w 142
 #define quit_go_button_h 51
 
-void collision_manager(player* p , bullet_list** bl , zombie_list** zl ); 
-void frame_drawer(SDL_Renderer* ecran , player* p , zombie_list* zl , bullet_list* bl, SDL_Texture* health_texture);
+// difficulty multiplier
+#define spawn_probability 3
+#define difficulty_multiplier_speed 0.05
+#define difficulty_multiplier_spawn 0.01
+
+void collision_manager(player* p , bullet_list** bl , zombie_list** zl  , int* score ); 
+void frame_drawer(SDL_Renderer* ecran , player* p , zombie_list* zl , bullet_list* bl, SDL_Texture* health_texture , SDL_Texture* score_texture);
 void shoot_checker( player* p , bullet_list** bl , SDL_Texture* bullet_texture) ; 
 void damage_animation(  player* p , SDL_Texture* normal_player , SDL_Texture* damaged_player );
 void buttons_manager ( Uint32 mouseState , SDL_Event event , int * quit  , int* scene_manager ,int* mouseX , int * mouseY) ; 

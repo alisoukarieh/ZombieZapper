@@ -33,7 +33,6 @@ void add_bullet(bullet_list** bl, bullet* b){
         (*bl)= malloc(sizeof(bullet_list));
         (*bl) -> bullet = b;
         (*bl) -> next = NULL;
-        printf("bl is null \n");
     } else {
         //printf("bl is not null");
         bullet_list* tmp = (*bl);
@@ -67,7 +66,7 @@ void move_bullet(bullet* b) {
 void move_bullets(bullet_list** bl){
     if ( *bl == NULL)
     {
-        printf("Error: bl is NULL in move_bullets \n");
+        return;
         
     } else {
         bullet_list* tmp = *bl;
@@ -117,7 +116,7 @@ void remove_bullet(bullet_list** bl, bullet* b){
 void free_bullet_list(bullet_list** bl){
     if ( *bl == NULL)
     {
-        printf("Error: bl is NULL in free_bullet_list \n");
+        return ;
         
     } else {
         bullet_list* tmp = *bl;

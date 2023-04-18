@@ -1,6 +1,6 @@
 #include "./include/game_mechanics.h"
 
-void collision_manager(player* p , bullet_list** bl , zombie_list** zl  ){
+void collision_manager(player* p , bullet_list** bl , zombie_list** zl , int* score ){
     bullet_list* current_bullet = *bl;
     zombie_list* current_zombie = *zl;
     int zombie_hit = 0;
@@ -9,6 +9,7 @@ void collision_manager(player* p , bullet_list** bl , zombie_list** zl  ){
         while (current_bullet != NULL){
             if ( SDL_HasIntersection( &(current_zombie->zombie->rect) , &(current_bullet->bullet->rect )) == SDL_TRUE ){
                     zombie_hit = 1;
+                    *score += 1;
                     bullet_list* next_ptr_bullet = current_bullet->next ; 
                     zombie_list* next_ptr_zombie = current_zombie->next ;
                     remove_zombie(zl,current_zombie->zombie); 
@@ -33,8 +34,9 @@ void collision_manager(player* p , bullet_list** bl , zombie_list** zl  ){
     }
 }
 
-void frame_drawer( SDL_Renderer* renderer , player* p , zombie_list* zl , bullet_list* bl , SDL_Texture* health_texture){
+void frame_drawer( SDL_Renderer* renderer , player* p , zombie_list* zl , bullet_list* bl , SDL_Texture* health_texture , SDL_Texture* score_texture){
     drawTexture(renderer , p->texture , p->x , p->y , p->angle);
+    drawTexture(renderer , score_texture , score_x , score_y, 0);
     drawTexture(renderer , health_texture , HEALTH_BAR_X , HEALTH_BAR_Y, 0);
     zombie_list* tmp = zl;
     while (tmp != NULL){
@@ -90,7 +92,6 @@ void damage_animation( player* p , SDL_Texture* normal_player , SDL_Texture* dam
             } else {
                 p->texture = normal_player;
             } 
-            printf("taking damage %d") ; 
         }
         p->taking_damage -= 1;
     } else {
@@ -131,7 +132,6 @@ void buttons_manager ( Uint32 mouseState , SDL_Event event ,  int * quit  , int*
                 break;
         }
     }
-    printf("exit buttons manager \n");
 }
 
 // memeory management

@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include <SDL2/SDL.h>
+#include <string.h>
 
 // taille fenetre
 #define SCREEN_WIDTH 1280
@@ -17,6 +18,9 @@
 // Health bar position
 #define HEALTH_BAR_X 640 - 95
 #define HEALTH_BAR_Y 650
+
+#define score_x 31
+#define score_y 26
 
 // Init SDL
 int init(SDL_Window** gWindow,SDL_Renderer** gRenderer, char* nameWindow) ; 
@@ -33,5 +37,8 @@ void drawTexture (SDL_Renderer *gRenderer,SDL_Texture *texture,int x, int y, dou
 SDL_Texture* creerTextureSorbonne(SDL_Renderer *ecran,char *nom_file_bmp,int *size_w, int *size_h) ;
 
 void dessine_sorbonne(SDL_Renderer *ecran,SDL_Texture *sorbonneTexture,int x, int y) ;
+
+void score_init(SDL_Renderer* renderer , SDL_Texture** digits) ;
+void score_update(int score, SDL_Renderer* renderer, SDL_Texture** digits) ;
 
 #endif 
