@@ -29,8 +29,8 @@ void move_player(player* p, int x, int y){
     }
     p->x += x;
     p->y += y;
-    p->rect.x = p->x;
-    p->rect.y = p->y;
+    p->rect.x = p->x + player_collision_x_offset;
+    p->rect.y = p->y + player_collision_y_offset;
 }
 
 // Manage input
@@ -52,26 +52,57 @@ void input_player( player* p , int *quit ){
                 case SDLK_d:
                     if ( p -> x < SCREEN_WIDTH - player_dim )
                     {
-                        move_player(p, player_speed, 0);
+                        if ( SDL_GetKeyboardState(NULL)[SDL_SCANCODE_W] ){
+                            move_player(p, player_speed, -player_speed);
+                        }
+                        else if ( SDL_GetKeyboardState(NULL)[SDL_SCANCODE_S] ){
+                            move_player(p, player_speed, player_speed);
+                        } else {
+                            move_player(p, player_speed, 0);
+                        }
                     }
                     break;
                 case SDLK_a:
                     if (p -> x > 0){
-                        move_player(p, -player_speed, 0);
+                        if ( SDL_GetKeyboardState(NULL)[SDL_SCANCODE_W] ){
+                            move_player(p, -player_speed, -player_speed);
+                        }
+                        else if ( SDL_GetKeyboardState(NULL)[SDL_SCANCODE_S] ){
+                            move_player(p, -player_speed, player_speed);
+                        }
+                        else{
+                            move_player(p, -player_speed, 0);
+                        }
                     }
                     break;  
                 case SDLK_w:
                     if (p -> y > 0){
-                        move_player(p, 0, -player_speed);
+                        if ( SDL_GetKeyboardState(NULL)[SDL_SCANCODE_D] ){
+                            move_player(p, player_speed, -player_speed);
+                        }
+                        else if ( SDL_GetKeyboardState(NULL)[SDL_SCANCODE_A] ){
+                            move_player(p, -player_speed, -player_speed);
+                        }
+                        else{
+                            move_player(p, 0, -player_speed);
+                        }
                     }
                     break;
                 case SDLK_s:
                     if (p -> y < SCREEN_HEIGHT - player_dim ){
-                        move_player(p, 0, player_speed);
+                        if ( SDL_GetKeyboardState(NULL)[SDL_SCANCODE_D] ){
+                            move_player(p, player_speed, player_speed);
+                        }
+                        else if ( SDL_GetKeyboardState(NULL)[SDL_SCANCODE_A] ){
+                            move_player(p, -player_speed, player_speed);
+                        }
+                        else{
+                            move_player(p, 0, player_speed);
+                        }
                     }
                     break;
                 }
-                break;
+  dw              break;
             case SDL_MOUSEBUTTONDOWN:
                 if (event.button.button == SDL_BUTTON_LEFT) {
                     p->shoot = 1;

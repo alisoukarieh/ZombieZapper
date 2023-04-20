@@ -77,7 +77,7 @@ void player_movement_test(){
     SDL_Texture* main_menu_texture = loadTexture(ecran,"./textures/menus/menu.bmp",0,0);
 
     // init gameover_screen 
-    SDL_Texture* gameover_screen_texture = loadTexture(ecran,"./textures/menus/GameOverScreen.bmp",0,0);
+    SDL_Texture* gameover_screen_texture = loadTexture(ecran,"./textures/menus/GameOverScreen_white.bmp",0,0);
 
     // init how to play screen
     SDL_Texture* how_to_play_screen_texture = loadTexture(ecran,"./textures/menus/how_to_play.bmp",0,0);
@@ -104,6 +104,12 @@ void player_movement_test(){
 
     SDL_Texture* score_texture = loadTexture(ecran,"./textures/digits/score.bmp",0,0);
     int score = 0 ;
+    int highscore = 0;
+    loadHighScore( "./src/highscore.txt", &highscore) ; 
+    printf("highscore : %d" , highscore);
+
+    int reintialize = 0;
+
     while ( quit == 0)
     {
         SDL_RenderClear(ecran);
@@ -112,9 +118,22 @@ void player_movement_test(){
             
             case 0 : 
                 drawTexture(ecran,main_menu_texture,0,0,0);
-                buttons_manager ( mouseState , event  , &quit , &scene_manager , &mouseX , &mouseY) ; 
+                score_update(highscore,ecran, score_textures , highscore_menu_x , highscore_menu_y);
+                buttons_manager ( mouseState , event  , &quit , &scene_manager , &reintialize, &mouseX , &mouseY) ; 
                 break;
             case 1 :
+                if ( reintialize == 1 ) {
+                    printf("reintialize");
+                    free_all(&bl , &zl) ; 
+                    score = 0 ;
+                    p -> health = player_health;
+                    p -> taking_damage = 0 ;
+                    p->x = 500;
+                    p->y = 280;
+                    p->rect.x = p->x;
+                    p->rect.y = p->y;
+                    reintialize = 0 ; 
+                } 
                 current_health_bar_texture = health_manager(p, &scene_manager , health_bar_texture,health_bar_texture2,health_bar_texture3);
                 input_player(p , &quit);
                 rotate_player(p);
@@ -125,25 +144,21 @@ void player_movement_test(){
                 collision_manager(p,&bl,&zl, &score);
                 damage_animation(p, player_texture , damaged_player_texture);
                 drawTexture(ecran,background_texture,0,0,0);
-                score_update(score,ecran,score_textures);
+                score_update(score,ecran,score_textures , score_value_x , score_value_y);
                 frame_drawer(ecran,p,zl,bl,current_health_bar_texture , score_texture);
-                
                 break;
             case 2 :
                 // game over
-                free_all(&bl , &zl) ; 
+                saveHighScore( "./src/highscore.txt" , score) ; 
+                loadHighScore( "./src/highscore.txt" , &highscore) ;
                 drawTexture(ecran,gameover_screen_texture,0,0,0);
-                buttons_manager ( mouseState , event  , &quit , &scene_manager , &mouseX , &mouseY) ;
-                p -> health = player_health;
-                p -> taking_damage = 0 ;
-                p->x = 500;
-                p->y = 280;
-                p->rect.x = p->x;
-                p->rect.y = p->y;
+                score_update(highscore,ecran,score_textures,highscore_gameover_x , highscore_gameover_y);
+                score_update(score,ecran,score_textures,score_gameover_x , score_gameover_y);
+                buttons_manager ( mouseState , event  , &quit , &scene_manager , &reintialize, &mouseX , &mouseY) ;
                 break;
             case 3 :
                 drawTexture(ecran,how_to_play_screen_texture,0,0,0);
-                buttons_manager ( mouseState , event  , &quit , &scene_manager , &mouseX , &mouseY) ;
+                buttons_manager ( mouseState , event  , &quit , &scene_manager, &reintialize , &mouseX , &mouseY) ;
                 break;
         }
         SDL_RenderPresent(ecran);

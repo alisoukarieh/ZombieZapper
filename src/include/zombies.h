@@ -10,6 +10,10 @@
 
 #define zombie_speed 2
 #define zombie_dim 100
+#define zombie_collision_x_offset 15
+#define zombie_collision_y_offset 15
+#define zombie_collision_w  70
+#define zombie_collision_h  70
 
 typedef struct player player;
 

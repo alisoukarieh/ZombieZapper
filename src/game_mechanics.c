@@ -34,23 +34,6 @@ void collision_manager(player* p , bullet_list** bl , zombie_list** zl , int* sc
     }
 }
 
-void frame_drawer( SDL_Renderer* renderer , player* p , zombie_list* zl , bullet_list* bl , SDL_Texture* health_texture , SDL_Texture* score_texture){
-    drawTexture(renderer , p->texture , p->x , p->y , p->angle);
-    drawTexture(renderer , score_texture , score_x , score_y, 0);
-    drawTexture(renderer , health_texture , HEALTH_BAR_X , HEALTH_BAR_Y, 0);
-    zombie_list* tmp = zl;
-    while (tmp != NULL){
-        drawTexture(renderer , tmp->zombie->texture , tmp->zombie->x , tmp->zombie->y , tmp->zombie->angle);
-        tmp = tmp->next;
-    }
-    bullet_list* tmp2 = bl;
-    while (tmp2 != NULL){
-        drawTexture(renderer , tmp2->bullet->texture , tmp2->bullet->x , tmp2->bullet->y , tmp2->bullet->angle);
-        tmp2 = tmp2->next;
-    }
-    SDL_RenderPresent(renderer);
-}
-
 
 void shoot_checker( player* p , bullet_list** bl , SDL_Texture* bullet_texture) {
     if ( p -> shoot == 1){
@@ -84,23 +67,10 @@ SDL_Texture* health_manager(player* p  , int * scene_manager ,SDL_Texture* textu
     }
 } 
 
-void damage_animation( player* p , SDL_Texture* normal_player , SDL_Texture* damaged_player ){
-    if ( p->taking_damage != 0 ){
-        if (p->taking_damage % 5 == 0) {
-            if (p->texture == normal_player){
-                p->texture = damaged_player;
-            } else {
-                p->texture = normal_player;
-            } 
-        }
-        p->taking_damage -= 1;
-    } else {
-        p->texture = normal_player;
-    }
-}
 
 
-void buttons_manager ( Uint32 mouseState , SDL_Event event ,  int * quit  , int* scene_manager ,int* mouseX , int * mouseY) {
+
+void buttons_manager ( Uint32 mouseState , SDL_Event event , int * quit  , int* scene_manager , int* reinitialize ,int* mouseX , int * mouseY){
     while (SDL_PollEvent(&event)) {
 
         switch (event.type) {
@@ -121,6 +91,7 @@ void buttons_manager ( Uint32 mouseState , SDL_Event event ,  int * quit  , int*
                 }
                 // game over buttons  
                 else if (mouseState && SDL_BUTTON(SDL_BUTTON_LEFT) && *mouseX >= play_again_button_x && *mouseX < play_again_button_x + play_again_button_w && *mouseY >= play_again_button_y && *mouseY < play_again_button_y + play_again_button_h && *scene_manager == 2) {
+                    *reinitialize = 1 ;
                     *scene_manager = 1 ; 
                 } else if (mouseState && SDL_BUTTON(SDL_BUTTON_LEFT) && *mouseX >= quit_go_button_x && *mouseX < quit_go_button_x + quit_go_button_w && *mouseY >= quit_go_button_y && *mouseY < quit_go_button_y + quit_go_button_h && *scene_manager == 2) {
                     *quit = 1 ; 
@@ -138,4 +109,36 @@ void buttons_manager ( Uint32 mouseState , SDL_Event event ,  int * quit  , int*
 void free_all ( bullet_list** bl , zombie_list** zl ) {
     free_bullet_list(bl);
     free_zombie_list(zl);
+}
+
+
+void loadHighScore(const char* filename , int* highscore) {
+    FILE* file = fopen(filename, "r");
+    if (file != NULL) {
+        fscanf(file, "%d", highscore);
+        fclose(file);
+    } else {
+        printf("Error loading high score.\n");
+    }
+}
+
+void saveHighScore(const char* filename , int highscore) {
+    int lastScore;
+    FILE* file = fopen(filename, "r");
+    if (file != NULL) {
+        fscanf(file, "%d", &lastScore);
+        fclose(file);
+    } else {
+        lastScore = 0; // If highscore file doesn't exist, set the last score to 0
+    }
+    if (highscore > lastScore) {
+        file = fopen(filename, "w");
+        if (file != NULL) {
+            fprintf(file, "%d", highscore);
+            fclose(file);
+            printf("New high score: %d\n", highscore);
+        } else {
+            printf("Error saving high score.\n");
+        }
+    }
 }

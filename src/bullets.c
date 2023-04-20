@@ -9,8 +9,8 @@ bullet* create_bullet(player* p ,  SDL_Texture *texture){
         exit(1);
     }
     // assign bullet position to player position with the offset and while taking into account the player angle
-    b -> x = p->x + player_dim/2 + (player_gun_coord_x * cos(p->angle * M_PI / 180.0)) ;
-    b -> y = p->y + player_dim/2 + (player_gun_coord_y * sin(p->angle * M_PI / 180.0)) ; 
+    b -> x = p->x + player_dim/2 - bullet_dim_x/2 + (gun_r * cos((p->angle+gun_starting_angle) * M_PI / 180.0)) ;
+    b -> y = p->y + player_dim/2 - bullet_dim_y/2 +(gun_r * sin((p->angle+gun_starting_angle) * M_PI / 180.0)) ; 
     b->angle = p->angle;
     b->texture = texture;
     b->rect.x = b->x;

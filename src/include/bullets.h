@@ -6,7 +6,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
-#include "graphics.h"
+//#include "graphics.h"
 
 #define bullet_speed 15
 #define bullet_dim_x 30

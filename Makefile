@@ -9,4 +9,4 @@ test: $(OBJS)
 	$(CC) $(CFLAGS) $(OBJS) -o test $(LIBS)
 
 clean:
-	del $(OBJS) test
+	del $(OBJS) test.exe

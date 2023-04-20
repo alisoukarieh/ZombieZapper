@@ -10,10 +10,10 @@ zombie* create_zombie(SDL_Texture *texture){
     }
 
     z->texture = texture;
-    z->rect.x = z->x;
-    z->rect.y = z->y;
-    z->rect.w = zombie_dim;
-    z->rect.h = zombie_dim;
+    z->rect.x = z->x + zombie_collision_x_offset;
+    z->rect.y = z->y + zombie_collision_y_offset;
+    z->rect.w = zombie_collision_w;
+    z->rect.h = zombie_collision_h;
     z -> angle = 0;
 
     int z_x = rand() % ( SCREEN_WIDTH) - 100;
@@ -100,6 +100,7 @@ void move_zombie(zombie* z , player* p , int score , float difficulty){
     if ( z == NULL)
     {
         printf("Error: z is NULL in move_zombie \n");
+        exit(1);
     }
     // if out of bounds , move faster
     if (z->x < -100 || z->x > SCREEN_WIDTH+100 || z->y < -100 || z->y > SCREEN_HEIGHT + 100){
@@ -107,27 +108,26 @@ void move_zombie(zombie* z , player* p , int score , float difficulty){
     } else {
         multiplier = 1 + score*difficulty;
     }
-    //printf("multiplier: %d \n" , multiplier);
-    int delta_x = p->x - z->x;
-    int delta_y = p->y - z->y;
+    int delta_x = p->x + player_dim/2 - z->x - zombie_dim/2;
+    int delta_y = p->y + player_dim/2 - z->y - zombie_dim/2;
 
     double distance = sqrt( delta_x * delta_x + delta_y * delta_y );
 
-    z->x += (delta_x / distance) * zombie_speed * multiplier;
-    z->y += (delta_y / distance) * zombie_speed * multiplier;
+    if (distance!=0){
+        z->x += (delta_x / distance) * zombie_speed * multiplier;
+        z->y += (delta_y / distance) * zombie_speed * multiplier;
 
-    z->rect.x = z->x;
-    z->rect.y = z->y;
-    // rotate the zombie towards the player
-    rotate_zombie(z ,p);
+        z->rect.x = z->x + zombie_collision_x_offset;
+        z->rect.y = z->y + zombie_collision_y_offset;
+        rotate_zombie(z ,p);
+    }
+    
 }
 
 void move_zombies(zombie_list** zl , player* p , int score , float difficulty){
     if ( *zl == NULL)
     {
-        //printf("Error: zl is NULL in move_zombies \n");
         return;
-        
     } else {
         zombie_list* tmp = *zl;
         while (tmp != NULL){
