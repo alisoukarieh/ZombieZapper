@@ -21,7 +21,7 @@ player* create_player(int x, int y, int health, SDL_Texture *texture){
     return p;
 }
 
-// Edit player coordinates 
+// Edit player coordinates
 void move_player(player* p, int x, int y){
     if (p == NULL){
         printf("Error: p is NULL in move_player \n");
@@ -50,7 +50,7 @@ void input_player( player* p , int *quit ){
                 switch ( event.key.keysym.sym)
                 {
                 case SDLK_d:
-                    if ( p -> x < SCREEN_WIDTH - player_dim )
+                    if ( p -> x < SCREEN_WIDTH - player_dim ) // check if w or s is pressed with d
                     {
                         if ( SDL_GetKeyboardState(NULL)[SDL_SCANCODE_W] ){
                             move_player(p, player_speed, -player_speed);
@@ -63,7 +63,7 @@ void input_player( player* p , int *quit ){
                     }
                     break;
                 case SDLK_a:
-                    if (p -> x > 0){
+                    if (p -> x > 0){ // check if w or s is pressed with a
                         if ( SDL_GetKeyboardState(NULL)[SDL_SCANCODE_W] ){
                             move_player(p, -player_speed, -player_speed);
                         }
@@ -74,9 +74,9 @@ void input_player( player* p , int *quit ){
                             move_player(p, -player_speed, 0);
                         }
                     }
-                    break;  
+                    break;
                 case SDLK_w:
-                    if (p -> y > 0){
+                    if (p -> y > 0){ // check if a or d is pressed with w
                         if ( SDL_GetKeyboardState(NULL)[SDL_SCANCODE_D] ){
                             move_player(p, player_speed, -player_speed);
                         }
@@ -89,7 +89,7 @@ void input_player( player* p , int *quit ){
                     }
                     break;
                 case SDLK_s:
-                    if (p -> y < SCREEN_HEIGHT - player_dim ){
+                    if (p -> y < SCREEN_HEIGHT - player_dim ){ // check if d or a is pressed with s
                         if ( SDL_GetKeyboardState(NULL)[SDL_SCANCODE_D] ){
                             move_player(p, player_speed, player_speed);
                         }
@@ -102,7 +102,7 @@ void input_player( player* p , int *quit ){
                     }
                     break;
                 }
-  dw              break;
+                break;
             case SDL_MOUSEBUTTONDOWN:
                 if (event.button.button == SDL_BUTTON_LEFT) {
                     p->shoot = 1;
@@ -119,7 +119,7 @@ void rotate_player(player* p){
         printf("Error: p is NULL in rotate_player \n");
         exit(1);
     }
-    
+
     int mouseX, mouseY;
     SDL_GetMouseState(&mouseX, &mouseY);
     p->angle = atan2(mouseY - p->y, mouseX - p->x) ;

@@ -2,6 +2,7 @@
 #include "./include/player.h"
 #include "./include/zombies.h"
 
+// Create Bullet at the end of the gun's muzzle
 bullet* create_bullet(player* p ,  SDL_Texture *texture){
     bullet* b = malloc(sizeof(bullet));
     if (b == NULL){
@@ -10,7 +11,7 @@ bullet* create_bullet(player* p ,  SDL_Texture *texture){
     }
     // assign bullet position to player position with the offset and while taking into account the player angle
     b -> x = p->x + player_dim/2 - bullet_dim_x/2 + (gun_r * cos((p->angle+gun_starting_angle) * M_PI / 180.0)) ;
-    b -> y = p->y + player_dim/2 - bullet_dim_y/2 +(gun_r * sin((p->angle+gun_starting_angle) * M_PI / 180.0)) ; 
+    b -> y = p->y + player_dim/2 - bullet_dim_y/2 +(gun_r * sin((p->angle+gun_starting_angle) * M_PI / 180.0)) ;
     b->angle = p->angle;
     b->texture = texture;
     b->rect.x = b->x;
@@ -18,23 +19,23 @@ bullet* create_bullet(player* p ,  SDL_Texture *texture){
     b->rect.w = bullet_dim_x;
     b->rect.h = bullet_dim_y;
 
-    
+
     return b;
 }
 
+// Add bullet at the end of the bullet list
 void add_bullet(bullet_list** bl, bullet* b){
     if ( b == NULL)
     {
         printf("Error: b is NULL in add_bullet \n");
         exit(1);
     }
-    if ( (*bl) == NULL)
+    if ( (*bl) == NULL) // create a new list if argument list is null
     {
         (*bl)= malloc(sizeof(bullet_list));
         (*bl) -> bullet = b;
         (*bl) -> next = NULL;
-    } else {
-        //printf("bl is not null");
+    } else { // adds bullet at the end of the list
         bullet_list* tmp = (*bl);
         while (tmp->next != NULL){
             tmp = tmp->next;
@@ -50,6 +51,7 @@ void add_bullet(bullet_list** bl, bullet* b){
     }
 }
 
+// Move bullet according to it's direction
 void move_bullet(bullet* b) {
     if ( b == NULL)
     {
@@ -63,11 +65,12 @@ void move_bullet(bullet* b) {
     }
 }
 
+// Move every bullet of a list using move_bullet function
 void move_bullets(bullet_list** bl){
     if ( *bl == NULL)
     {
         return;
-        
+
     } else {
         bullet_list* tmp = *bl;
         while (tmp != NULL){
@@ -75,14 +78,14 @@ void move_bullets(bullet_list** bl){
             if ( ! ( tmp->bullet->x < 0 || tmp->bullet->x > SCREEN_WIDTH || tmp->bullet->y < 0 || tmp->bullet->y > SCREEN_HEIGHT ) ){
                 move_bullet(tmp->bullet);
             } else {
-                remove_bullet(bl, tmp->bullet); 
+                remove_bullet(bl, tmp->bullet);
             }
             tmp = tmp->next;
         }
     }
 }
 
-// remove bullet from the list
+// Remove bullet from the list
 void remove_bullet(bullet_list** bl, bullet* b){
     if ( b == NULL)
     {
@@ -103,7 +106,6 @@ void remove_bullet(bullet_list** bl, bullet* b){
             } else {
                 prev->next = tmp->next;
             }
-            free(tmp -> bullet -> texture);
             free(tmp -> bullet);
             free(tmp);
             return;
@@ -113,11 +115,12 @@ void remove_bullet(bullet_list** bl, bullet* b){
     }
 }
 
+// Free Bullet List
 void free_bullet_list(bullet_list** bl){
     if ( *bl == NULL)
     {
         return ;
-        
+
     } else {
         bullet_list* tmp = *bl;
         while (tmp != NULL){

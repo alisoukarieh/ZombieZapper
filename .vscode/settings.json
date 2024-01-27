@@ -10,7 +10,9 @@
         "bullets.h": "c",
         "game_mechanics.h": "c",
         "zombies.h": "c",
-        "ENTITIES.H": "cpp"
+        "ENTITIES.H": "cpp",
+        "graphics.h": "c",
+        "sdl.h": "c"
     },
     "C_Cpp.errorSquiggles": "disabled"
 }

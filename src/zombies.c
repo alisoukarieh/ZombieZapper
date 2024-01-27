@@ -2,6 +2,7 @@
 #include "./include/player.h"
 #include "./include/bullets.h"
 
+// Create Zombie
 zombie* create_zombie(SDL_Texture *texture){
     zombie* z = malloc(sizeof(zombie));
     if (z == NULL){
@@ -23,7 +24,7 @@ zombie* create_zombie(SDL_Texture *texture){
     } else {
         z_x -= SCREEN_WIDTH;
     }
-    
+
     if (z_y > 0) {
         z_y += SCREEN_HEIGHT;
     } else {
@@ -32,11 +33,10 @@ zombie* create_zombie(SDL_Texture *texture){
 
     z->x = z_x;
     z->y = z_y;
-
-
     return z;
 }
 
+// Add zombie to zombie list
 void add_zombie(zombie_list** zl, zombie* z){
     if ( z == NULL)
     {
@@ -65,6 +65,7 @@ void add_zombie(zombie_list** zl, zombie* z){
 
 }
 
+// Remove zombie from zombie list
 void remove_zombie(zombie_list** zl, zombie* z){
     if ( z == NULL)
     {
@@ -85,7 +86,6 @@ void remove_zombie(zombie_list** zl, zombie* z){
             } else {
                 prev->next = tmp->next;
             }
-            free(tmp -> zombie -> texture);
             free(tmp -> zombie);
             free(tmp);
             return;
@@ -95,8 +95,9 @@ void remove_zombie(zombie_list** zl, zombie* z){
     }
 }
 
+// Move zombie towards the player
 void move_zombie(zombie* z , player* p , int score , float difficulty){
-    int multiplier = 1;
+    float multiplier = 1;
     if ( z == NULL)
     {
         printf("Error: z is NULL in move_zombie \n");
@@ -113,6 +114,10 @@ void move_zombie(zombie* z , player* p , int score , float difficulty){
 
     double distance = sqrt( delta_x * delta_x + delta_y * delta_y );
 
+    if (multiplier > 4.5) { // max speed for zombies
+        multiplier = 4.5;
+    }
+
     if (distance!=0){
         z->x += (delta_x / distance) * zombie_speed * multiplier;
         z->y += (delta_y / distance) * zombie_speed * multiplier;
@@ -121,9 +126,10 @@ void move_zombie(zombie* z , player* p , int score , float difficulty){
         z->rect.y = z->y + zombie_collision_y_offset;
         rotate_zombie(z ,p);
     }
-    
+
 }
 
+// Move all zombies towards the player using move_zombie function
 void move_zombies(zombie_list** zl , player* p , int score , float difficulty){
     if ( *zl == NULL)
     {
@@ -137,11 +143,12 @@ void move_zombies(zombie_list** zl , player* p , int score , float difficulty){
     }
 }
 
+// Free zombie list
 void free_zombie_list(zombie_list** zl){
     if ( *zl == NULL)
     {
         return ;
-        
+
     } else {
         zombie_list* tmp = *zl;
         while (tmp -> next != NULL){
@@ -155,6 +162,7 @@ void free_zombie_list(zombie_list** zl){
     }
 }
 
+// Make zombie face the player
 void rotate_zombie ( zombie* z , player* p ){
     if ( z == NULL)
     {
@@ -168,13 +176,17 @@ void rotate_zombie ( zombie* z , player* p ){
     }
     // rotate the zombie towards the player
     z->angle = atan2( (p->y - z->y) , (p->x - z->x) ) * 180 / M_PI;
-    // double cos_angle = (p->x - z->x) / sqrt( (p->x - z->x)*(p->x - z->x) + (p->y - z->y)*(p->y - z->y) );
-    // z->angle = acos(cos_angle) * 180 / M_PI;
+
 }
 
+// Generate zombies based on a spawn rate as well as score
 void zombie_generator(zombie_list** zl , SDL_Texture* texture , int p , int score , float difficulty_multiplier) {
     float x = rand() % 100;
-    if (x  < p + score*difficulty_multiplier){
+    float p_max = p + score*difficulty_multiplier ;
+    if (p_max + p > 100){
+        p_max = 100;
+    }
+    if (x  < p_max){
         add_zombie(zl , create_zombie(texture));
     }
-} 
+}

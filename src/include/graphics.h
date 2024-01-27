@@ -15,7 +15,7 @@
 #define SCREEN_WIDTH 1280
 #define SCREEN_HEIGHT 720
 
-// bool 
+// bool
 #define FALSE 0
 #define TRUE 1
 
@@ -26,14 +26,14 @@
 #define score_x 31
 #define score_y 26
 
-// Menu 
-#define highscore_menu_x 651 
+// Menu
+#define highscore_menu_x 651
 #define highscore_menu_y 181
-// play button  
+// play button
 #define play_button_x 560
 #define play_button_y 310
 #define play_button_w 160
-#define play_button_h 50 
+#define play_button_h 50
 
 // how to play button
 #define how_to_play_button_x 426
@@ -54,8 +54,8 @@
 #define back_button_w 177
 #define back_button_h 54
 
-// GameOver Screen 
-#define highscore_gameover_x 657 
+// GameOver Screen
+#define highscore_gameover_x 657
 #define highscore_gameover_y 233
 #define score_gameover_x 657
 #define score_gameover_y 288
@@ -77,25 +77,27 @@
 
 
 // Init SDL
-int init(SDL_Window** gWindow,SDL_Renderer** gRenderer, char* nameWindow) ; 
+int init(SDL_Window** gWindow,SDL_Renderer** gRenderer, char* nameWindow) ;
 
 // Return a SDL_Texture from a file
-void close(SDL_Window** gWindow,SDL_Renderer** gRenderer) ; 
+void close(SDL_Window** gWindow,SDL_Renderer** gRenderer) ;
 
 // Return a SDL_Texture from a file
-SDL_Texture* loadTexture(SDL_Renderer *gRenderer,char *file_name_bmp,int *size_w, int *size_h) ; 
+SDL_Texture* loadTexture(SDL_Renderer *gRenderer,char *file_name_bmp,int *size_w, int *size_h) ;
 
 // Draw a SDL_Texture at position x, y
 void drawTexture (SDL_Renderer *gRenderer,SDL_Texture *texture,int x, int y, double angle) ;
 
-SDL_Texture* creerTextureSorbonne(SDL_Renderer *ecran,char *nom_file_bmp,int *size_w, int *size_h) ;
-
-void dessine_sorbonne(SDL_Renderer *ecran,SDL_Texture *sorbonneTexture,int x, int y) ;
-
+// Initialize digits textures
 void score_init(SDL_Renderer* renderer , SDL_Texture** digits) ;
+
+//Draw digit textures corresponding to the score
 void score_update(int score, SDL_Renderer* renderer, SDL_Texture** digits , int x , int y) ;
 
+// Draw all textures that make a frame
 void frame_drawer(SDL_Renderer* ecran , player* p , zombie_list* zl , bullet_list* bl, SDL_Texture* health_texture , SDL_Texture* score_texture);
+
+// Change player textures to make damage animation
 void damage_animation(  player* p , SDL_Texture* normal_player , SDL_Texture* damaged_player );
 
-#endif 
+#endif

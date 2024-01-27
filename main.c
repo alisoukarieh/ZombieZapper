@@ -2,8 +2,8 @@
 #include <stdlib.h>
 #include <time.h>
 #include <math.h>
+
 #include "./src/include/graphics.h"
-//#include "entities.h"
 #include "./src/include/player.h"
 #include "./src/include/bullets.h"
 #include "./src/include/zombies.h"
@@ -11,37 +11,9 @@
 #include <SDL2/SDL.h>
 
 
-// int opening_window_test()
-// {
-//     SDL_Window* fenetre=NULL;
-//     SDL_Renderer* ecran=NULL;
-
-//     init(&fenetre,&ecran,"ZombieZapper");
-//     SDL_Delay(5000);
-//     close(&fenetre,&ecran);
-
-//     return 0;
-// }
-
-// void loading_player_texture_test(){
-//     SDL_Window* fenetre=NULL;
-//     SDL_Renderer* ecran=NULL;
-//     init(&fenetre,&ecran,"ZombieZapper");
-//     player* p = create_player( 0 , 0 , 100 , NULL );
-//     p->texture = loadTexture(ecran,"./textures/player.bmp",&p->x,&p->y);
-//     drawTexture(ecran,p->texture,p->x,p->y,p->angle);
-     
-
-//     SDL_RenderPresent(ecran);
-//     SDL_Delay(5000);
-//     close(&fenetre,&ecran);
-
-// }
-
-void player_movement_test(){
-    int  scene_manager = 0;
-
-
+int main(int argc, char* argv[])
+{
+    srand(time(NULL));
     // init window
     SDL_Window* fenetre=NULL;
     SDL_Renderer* ecran=NULL;
@@ -51,13 +23,13 @@ void player_movement_test(){
     SDL_Texture* player_texture = loadTexture(ecran,"./textures/entities/player3.bmp",0,0);
     SDL_Texture* damaged_player_texture = loadTexture(ecran,"./textures/entities/damaged_player_2.bmp",0,0);
     player* p = create_player( 500 , 280 ,  player_health , player_texture );
-    
+
 
     // init bullet
     SDL_Texture* bullet_texture = loadTexture(ecran,"./textures/entities/bullet.bmp",0,0);
-    bullet_list* bl = NULL; 
+    bullet_list* bl = NULL;
 
-    // init zombie
+    // init zombied
     SDL_Texture* zombie_texture = loadTexture(ecran,"./textures/entities/zombie.bmp",0,0);
     zombie_list* zl = NULL;
 
@@ -69,28 +41,23 @@ void player_movement_test(){
     SDL_Texture* health_bar_texture2 = loadTexture(ecran,"./textures/healthbar/2_hearts.bmp",0,0);
     SDL_Texture* health_bar_texture3 = loadTexture(ecran,"./textures/healthbar/3_hearts.bmp",0,0);
     SDL_Texture* current_health_bar_texture = health_bar_texture;
-    if ( health_bar_texture == NULL || health_bar_texture2 == NULL || health_bar_texture3 == NULL ){
-        printf("error loading health bar textures");
-    }
 
-    // init menu 
+    // init menu
     SDL_Texture* main_menu_texture = loadTexture(ecran,"./textures/menus/menu.bmp",0,0);
 
-    // init gameover_screen 
+    // init gameover_screen
     SDL_Texture* gameover_screen_texture = loadTexture(ecran,"./textures/menus/GameOverScreen_white.bmp",0,0);
 
     // init how to play screen
     SDL_Texture* how_to_play_screen_texture = loadTexture(ecran,"./textures/menus/how_to_play.bmp",0,0);
 
-    // init mouse 
+    // init mouse
     int mouseX, mouseY;
     Uint32 mouseState;
-    int quit = 0 ;   
     SDL_Event event;
 
-    // init score textures 
+    // init score textures
     SDL_Texture** score_textures = malloc(10*sizeof(SDL_Texture*));
-    //score_init(ecran,score_textures);
     score_textures[0] = loadTexture(ecran,"./textures/digits/digit_0.bmp",0,0);
     score_textures[1] = loadTexture(ecran,"./textures/digits/digit_1.bmp",0,0);
     score_textures[2] = loadTexture(ecran,"./textures/digits/digit_2.bmp",0,0);
@@ -101,30 +68,30 @@ void player_movement_test(){
     score_textures[7] = loadTexture(ecran,"./textures/digits/digit_7.bmp",0,0);
     score_textures[8] = loadTexture(ecran,"./textures/digits/digit_8.bmp",0,0);
     score_textures[9] = loadTexture(ecran,"./textures/digits/digit_9.bmp",0,0);
-
     SDL_Texture* score_texture = loadTexture(ecran,"./textures/digits/score.bmp",0,0);
     int score = 0 ;
     int highscore = 0;
-    loadHighScore( "./src/highscore.txt", &highscore) ; 
+    loadHighScore( "./src/highscore.txt", &highscore) ;
     printf("highscore : %d" , highscore);
 
     int reintialize = 0;
+    int quit = 0 ;
+    int  scene_manager = 0;
 
     while ( quit == 0)
     {
         SDL_RenderClear(ecran);
-        
+
         switch (scene_manager) {
-            
-            case 0 : 
+
+            case 0 :
                 drawTexture(ecran,main_menu_texture,0,0,0);
                 score_update(highscore,ecran, score_textures , highscore_menu_x , highscore_menu_y);
-                buttons_manager ( mouseState , event  , &quit , &scene_manager , &reintialize, &mouseX , &mouseY) ; 
+                buttons_manager ( mouseState , event  , &quit , &scene_manager , &reintialize, &mouseX , &mouseY) ;
                 break;
             case 1 :
                 if ( reintialize == 1 ) {
-                    printf("reintialize");
-                    free_all(&bl , &zl) ; 
+                    free_all(&bl , &zl) ;
                     score = 0 ;
                     p -> health = player_health;
                     p -> taking_damage = 0 ;
@@ -132,8 +99,8 @@ void player_movement_test(){
                     p->y = 280;
                     p->rect.x = p->x;
                     p->rect.y = p->y;
-                    reintialize = 0 ; 
-                } 
+                    reintialize = 0 ;
+                }
                 current_health_bar_texture = health_manager(p, &scene_manager , health_bar_texture,health_bar_texture2,health_bar_texture3);
                 input_player(p , &quit);
                 rotate_player(p);
@@ -149,8 +116,8 @@ void player_movement_test(){
                 break;
             case 2 :
                 // game over
-                saveHighScore( "./src/highscore.txt" , score) ; 
-                loadHighScore( "./src/highscore.txt" , &highscore) ;
+                saveHighScore( "./src/highscore.txt" , score) ;
+                loadHighScore( "highscore.txt" , &highscore) ;
                 drawTexture(ecran,gameover_screen_texture,0,0,0);
                 score_update(highscore,ecran,score_textures,highscore_gameover_x , highscore_gameover_y);
                 score_update(score,ecran,score_textures,score_gameover_x , score_gameover_y);
@@ -191,58 +158,8 @@ void player_movement_test(){
     free( p -> texture );
     free( p );
     free_all(&bl,&zl);
- 
+
     close(&fenetre,&ecran);
-    
-}
 
-void list_testing(){    
-    SDL_Window* fenetre=NULL;
-    SDL_Renderer* ecran=NULL;
-    init(&fenetre,&ecran,"ZombieZapper");
-
-    SDL_Texture* player_texture = loadTexture(ecran,"./textures/player.bmp",0,0) ; 
-    player* p = create_player( 10 , 10 , 100 , player_texture );
-
-
-    SDL_Texture* bullet_texture = loadTexture(ecran,"./textures/bullet.bmp",0,0);
-
-    bullet_list* bl = NULL;
-
-    bullet* b1 = create_bullet(p,bullet_texture);
-    move_player(p,10,10);
-    bullet* b2 = create_bullet(p,bullet_texture);
-    move_player(p,10,10);
-    bullet* b3 = create_bullet(p,bullet_texture);
-
-    add_bullet(&bl,b1);
-    add_bullet(&bl,b2);
-    add_bullet(&bl,b3);
-
-    bullet_list* tmp = bl;
-    while ( tmp != NULL)
-    {
-        printf("bullet pos : %f %f \n",tmp->bullet->x,tmp->bullet->y);
-        tmp = tmp->next;
-    }
-    tmp = bl;
-    remove_bullet(&bl,b2);
-    while ( tmp != NULL)
-    {
-        printf("bullet pos : %f %f \n",tmp->bullet->x,tmp->bullet->y);
-        tmp = tmp->next;
-    }
-
-    printf("end of list \n");
-
-}
-
-
-int main(int argc, char* argv[])
-{
-    player_movement_test();
-    //list_testing();
-    printf("end of program \n");
     return 0;
-
 }
